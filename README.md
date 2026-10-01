@@ -16,8 +16,10 @@ pour chacun une analyse **reconstituée à partir du texte de la Cour**.
 - **Fonctionne sur macOS, Linux et Windows** avec Python 3.9 ou plus récent, et
   s'utilise **dans le navigateur** (interface locale,
   `http://127.0.0.1:8765`). Sur macOS, une **image disque `.dmg`** permet de
-  lancer le programme par un double-clic, sans commande à taper (section 11) ;
-  la veille hebdomadaire s'installe en une commande (section 6).
+  lancer le programme par un double-clic, sans commande à taper :
+  [télécharger l'image](https://github.com/arnaudtdeb-beep/disque-image-macos/releases)
+  puis double-clic sur `Veille criminelle.command` (section 11). La veille
+  hebdomadaire s'installe en une commande (section 6).
 - **Aucun mot de passe n'est stocké** : par défaut, aucune authentification n'est
   requise. En source PISTE, la clé reste sur votre machine.
 
@@ -430,7 +432,34 @@ l'interface s'ouvre. Rien n'y est compilé ni signé — ce sont des scripts et 
 Python — donc macOS ne peut pas refuser l'ouverture, contrairement à une
 application non signée.
 
-L'image contient :
+### Télécharger l'image
+
+Toutes les versions publiées sont regroupées sur une seule page :
+
+**<https://github.com/arnaudtdeb-beep/disque-image-macos/releases>**
+
+Sur cette page, tout en bas, dans la rubrique **Assets**, cliquez sur le fichier
+`Veille-criminelle-<version>.dmg` (133 Ko). Lien direct vers la version
+actuelle :
+
+<https://github.com/arnaudtdeb-beep/disque-image-macos/releases/latest/download/Veille-criminelle-1.0.0.dmg>
+
+À côté du fichier, `SHA256SUMS` permet de vérifier que le téléchargement est
+complet. Sur le Mac, dans le dossier Téléchargements :
+
+```bash
+shasum -a 256 ~/Downloads/Veille-criminelle-1.0.0.dmg
+# 1116218d7a0f03b0ade243cfc6d9674df568f592698857b2ae055950d307958a
+```
+
+Puis double-cliquez sur le `.dmg` téléchargé : l'image s'ouvre, et il reste à
+double-cliquer sur `Veille criminelle.command` à l'intérieur.
+
+> Le nom du fichier porte le numéro de version. Après une `v1.1.0`, le nom sera
+> `Veille-criminelle-1.1.0.dmg` : c'est toujours le fichier le plus récent de la
+> page ci-dessus qu'il faut prendre.
+
+### Ce que contient l'image
 
 | Élément | Rôle |
 |---|---|
