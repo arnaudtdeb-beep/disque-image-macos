@@ -47,8 +47,24 @@ EXCLUS_FICHIERS = {".env", ".gitignore"}
 SUFFIXES_EXCLUS = (".pyc", ".pyo", ".sqlite3", ".sqlite3-wal", ".sqlite3-shm")
 
 
+def version_lisible(descrit: str) -> str:
+    """Transforme la sortie de `git describe` en version acceptable dans un nom.
+
+    Sans tag, `git describe` ne rend qu'un condensé : le nom du fichier `.dmg`
+    porterait alors un identifiant de commit au lieu d'une version.
+    """
+    texte = descrit.strip()
+    if not texte:
+        return "0.0.0-dev"
+    tete = texte.removeprefix("v").split("-", 1)[0].split("+", 1)[0]
+    majeure, _, mineure = tete.partition(".")
+    if majeure.isdigit() and mineure[:1].isdigit():
+        return texte.removeprefix("v")
+    return f"0.0.0-dev+{texte}"
+
+
 def version_par_defaut() -> str:
-    """Version du dépôt si disponible, sinon une version de développement."""
+    """Version du dépôt si elle existe, sinon une version de développement lisible."""
     try:
         resultat = subprocess.run(  # noqa: S603,S607 - git, commande figée
             ["git", "describe", "--tags", "--always", "--dirty"],
@@ -57,10 +73,10 @@ def version_par_defaut() -> str:
             text=True,
         )
     except OSError:
-        resultat = None
-    if resultat and resultat.returncode == 0 and resultat.stdout.strip():
-        return resultat.stdout.strip().lstrip("v")
-    return "0.0.0-dev"
+        return "0.0.0-dev"
+    if resultat.returncode:
+        return "0.0.0-dev"
+    return version_lisible(resultat.stdout)
 
 
 def est_exclu(nom: str) -> bool:
@@ -137,7 +153,8 @@ def reglages_dmgbuild(racine: Path) -> dict:
         "files": fichiers_image(racine),
         "symlinks": {},
         "hide": [PAYLOAD],
-        "background": "#F4F4F2",
+        # dmgbuild n'accepte les couleurs hexadécimales qu'en minuscules.
+        "background": "#f4f4f2",
         "window_rect": ((140, 120), (620, 420)),
         "default_view": "icon-view",
         "show_status_bar": False,

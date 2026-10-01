@@ -361,7 +361,7 @@ web/               interface navigateur (aucun framework)
 samples/           jeu de démonstration (données FICTIVES)
 data/cache/        archives DILA téléchargées et extraites
   dila.py          données ouvertes DILA : index, téléchargement, XML
-tests/             122 tests hors-ligne (dont 31 sur fixtures DILA réelles)
+tests/             125 tests hors-ligne (dont 31 sur fixtures DILA réelles)
   test_offline.py  extraction, thèmes, synthèse, base, rapports
   test_dila.py     parsing DILA, zones, nomenclature, provenance
   test_install.py  installateur, plist launchd, crontab

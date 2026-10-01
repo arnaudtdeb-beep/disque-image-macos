@@ -203,6 +203,33 @@ class TestAssemblage(unittest.TestCase):
                 self.assertIn(nom, reglages["icon_locations"])
                 self.assertTrue(any(nom in f for f in reglages["files"]))
 
+    def test_couleur_de_fond_en_minuscules(self):
+        # dmgbuild rejette une couleur hexadécimale en majuscules.
+        couleur = dmg_mod.reglages_dmgbuild(self.racine)["background"]
+        self.assertEqual(couleur, couleur.lower())
+        self.assertTrue(couleur.startswith("#"))
+        self.assertRegex(couleur, r"^#[0-9a-f]{6}$")
+
+    def test_version_lisible(self):
+        # Sans tag, `git describe` ne rend qu'un condensé : le nom du fichier
+        # ne doit pas être un identifiant de commit.
+        for attendu, descrit in [
+            ("1.2.3", "v1.2.3"),
+            ("1.2.3", "1.2.3"),
+            ("1.2.3-4-gabc1234", "1.2.3-4-gabc1234"),
+            ("0.1", "v0.1"),
+            ("0.0.0-dev+98ffc1b", "98ffc1b"),
+            ("0.0.0-dev+98ffc1b-dirty", "98ffc1b-dirty"),
+            ("0.0.0-dev", ""),
+        ]:
+            with self.subTest(descrit=descrit):
+                self.assertEqual(dmg_mod.version_lisible(descrit), attendu)
+
+    def test_version_par_defaut_est_exploitable(self):
+        version = dmg_mod.version_par_defaut()
+        self.assertRegex(version, r"^0?\.?\d+\.\d+")
+        self.assertNotIn(" ", version)
+
     def test_poids_restant_raisonnable(self):
         taille = sum(p.stat().st_size for p in self.racine.rglob("*") if p.is_file())
         self.assertLess(taille, 5 * 1024 * 1024, "l'image embarquerait des données")
