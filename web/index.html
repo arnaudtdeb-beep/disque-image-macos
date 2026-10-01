@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veille chambre criminelle — Cour de cassation</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Veille — chambre criminelle</h1>
+    <p class="sub">Arrêts de la Cour de cassation · source Judilibre (open data) via PISTE</p>
+  </div>
+  <div class="actions">
+    <div class="period">
+      <label>du <input type="date" id="debut"></label>
+      <label>au <input type="date" id="fin"></label>
+      <select id="preset" title="Périodes rapides">
+        <option value="7">7 derniers jours</option>
+        <option value="semaine">Semaine dernière</option>
+        <option value="30">30 derniers jours</option>
+        <option value="90">90 derniers jours</option>
+        <option value="tout">Tout l'historique</option>
+      </select>
+    </div>
+    <button id="btn-update" class="primary">Actualiser</button>
+    <button id="btn-export-md">Export Markdown</button>
+    <button id="btn-export-json">Export JSON</button>
+  </div>
+</header>
+
+<div id="banner" class="banner hidden"></div>
+
+<section class="stats" id="stats">
+  <div class="stat"><span class="n" id="stat-total">–</span><span class="l">arrêts</span></div>
+  <div class="stat"><span class="n" id="stat-bulletin">–</span><span class="l">publiés au bulletin</span></div>
+  <div class="stat"><span class="n" id="stat-cassation">–</span><span class="l">cassations</span></div>
+  <div class="stat"><span class="n" id="stat-themes">–</span><span class="l">thèmes distincts</span></div>
+</section>
+
+<section class="filters">
+  <input type="search" id="search" placeholder="Rechercher dans les.expected, motifs, motifs de la Cour, textes appliqués…">
+  <select id="solution">
+    <option value="">Toutes les solutions</option>
+  </select>
+  <label class="switch"><input type="checkbox" id="only-bulletin"> <span>Publiés au bulletin uniquement</span></label>
+  <label class="switch"><input type="checkbox" id="only-particulier"> <span>Intérêt particulier</span></label>
+  <select id="sort">
+    <option value="date-desc">Date (récent → ancien)</option>
+    <option value="date-asc">Date (ancien → récent)</option>
+    <option value="bulletin">Bulletin d'abord</option>
+    <option value="theme">Thème</option>
+  </select>
+</section>
+
+<section class="themes" id="theme-bar">
+  <span class="hint">Filtrer par thème :</span>
+  <div class="chips" id="chips"></div>
+</section>
+
+<main id="list" class="list"></main>
+
+<footer class="footer">
+  <p>Les résumés sont issus du texte de la Cour (extraits vérifiés) ; la citation exacte
+     de l'arrêt prévaut toujours. Outil de veille documentaire, sans valeur juridique.</p>
+  <p class="config" id="config-line"></p>
+</footer>
+
+<template id="tpl-card">
+  <article class="card">
+    <header class="card-head">
+      <div class="card-title">
+        <span class="date"></span>
+        <span class="num"></span>
+        <span class="sol"></span>
+      </div>
+      <div class="badges"></div>
+      <button class="toggle">Détail</button>
+    </header>
+    <div class="official"></div>
+    <div class="chips small"></div>
+    <div class="body hidden">
+      <section class="block"><h3>L'attendu de la Cour</h3><ul class="attendu"></ul></section>
+      <section class="block"><h3>La solution</h3><ul class="solution"></ul></section>
+      <section class="block"><h3>Les motifs</h3><ul class="motifs"></ul></section>
+      <section class="block"><h3>Portée</h3><ul class="portee"></ul></section>
+      <section class="block"><h3>Les moyens du pourvoi</h3><ul class="moyens"></ul></section>
+      <section class="block"><h3>Textes appliqués</h3><ul class="textes"></ul></section>
+      <section class="block evidences hidden">
+        <h3>Pourquoi ce classement thématique</h3>
+        <div class="evi"></div>
+      </section>
+      <section class="block citations hidden">
+        <h3>Citations vérifiées</h3>
+        <div class="cit"></div>
+      </section>
+      <section class="block"><details class="fulltext"><summary>Texte intégral de l'arrêt</summary><pre></pre></details></section>
+      <footer class="card-foot"></footer>
+    </div>
+  </article>
+</template>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

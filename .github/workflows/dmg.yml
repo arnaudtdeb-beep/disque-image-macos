@@ -1,0 +1,68 @@
+name: image-discoque-macos
+
+# L'image n'est construite qu'à la demande (workflow_dispatch) ou lors d'un tag
+# `v1.2.3`, qui la joint à la version publiée. La construction exige macOS :
+# `hdiutil` n'existe pas ailleurs.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version inscrite dans l'image (laisser vide pour celle du dépôt)"
+        required: false
+        default: ""
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  dmg:
+    # HFS+ reste lisible par toutes les versions de macOS, y compris anciennes.
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # `git describe` a besoin des tags
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Vérifier la suite de tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Installer dmgbuild
+        run: python3 -m pip install --disable-pip-version-check dmgbuild==1.6.7
+
+      - name: Construire l'image
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$VERSION" ]; then
+            python3 tools/build_dmg.py --version "$VERSION"
+          else
+            python3 tools/build_dmg.py
+          fi
+
+      - name: Contrôler le fichier produit
+        run: |
+          ls -la dist/*.dmg
+          shasum -a 256 dist/*.dmg | tee dist/SHA256SUMS
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: veille-criminelle-dmg
+          path: |
+            dist/*.dmg
+            dist/SHA256SUMS
+          if-no-files-found: error
+
+      - name: Joindre l'image à la version
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.dmg
+            dist/SHA256SUMS

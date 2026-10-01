@@ -1,0 +1,1253 @@
+{
+ "_avertissement": "DONNEES FICTIVES. Ce jeu de demonstration reproduit la structure editoriale d'arrets de la chambre criminelle mais ne correspond a aucun arret reel. Ne jamais le citer.",
+ "source": "crim_hebdo — jeu de démonstration généré par tools/make_sample.py",
+ "arrets": [
+  {
+   "meta": {
+    "id": "demo0000000000000000000001",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO01",
+    "number": "25-91.204",
+    "numbers": [
+     "25-91.204"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-24",
+    "type": "arret",
+    "solution": "rejet",
+    "solution_label": "Rejet du pourvoi",
+    "publication": [
+     "b"
+    ],
+    "publication_labels": [
+     "Publié au bulletin (B)"
+    ],
+    "au_bulletin": true,
+    "au_rapport": false,
+    "summary": "Le placement en garde à vue d'une personne majeure sans prolongation préalable viole l'article 62 du code de procédure pénale.",
+    "particulier_interet": true,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000001",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Droit des personnes",
+     "Procédure pénale"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000001",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO01",
+     "number": "25-91.204",
+     "numbers": [
+      "25-91.204"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-24",
+     "type": "arret",
+     "solution": "rejet",
+     "solution_label": "Rejet du pourvoi",
+     "publication": [
+      "b"
+     ],
+     "publication_labels": [
+      "Publié au bulletin (B)"
+     ],
+     "au_bulletin": true,
+     "au_rapport": false,
+     "summary": "Le placement en garde à vue d'une personne majeure sans prolongation préalable viole l'article 62 du code de procédure pénale.",
+     "particulier_interet": true,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000001",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Droit des personnes",
+      "Procédure pénale"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "garde_a_vue",
+      "label": "Garde à vue",
+      "icon": "⏱",
+      "score": 41.4,
+      "confidence": 1.0,
+      "matches": 10,
+      "evidence": [
+       "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue :",
+       "/ le placement en garde à vue de M. Alpha a été effectué sans prolongation préalable, en violation de l'article 62 du code de procédure pénale;"
+      ],
+      "note": "Durée, conditions et régularité de la garde à vue."
+     },
+     {
+      "code": "nullite",
+      "label": "Nullité",
+      "icon": "⛔",
+      "score": 14.1,
+      "confidence": 0.35,
+      "matches": 3,
+      "evidence": [
+       "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue :"
+      ],
+      "note": "Nullité de l'acte, de la procédure ou du jugement ; moyen soulevé ou retenu par la Cour."
+     },
+     {
+      "code": "droits_defense",
+      "label": "Droits de la défense",
+      "icon": "⚖️",
+      "score": 11.9,
+      "confidence": 0.3,
+      "matches": 3,
+      "evidence": [
+       "/ aucune exception n'étant établie, le droit d'assistance a été méconnu.",
+       "/ l'audition de M. Alpha s'est déroulée sans la présence d'un avocat, en violation de l'article 63-2 du code de procédure pénale;"
+      ],
+      "note": "Intervention du conseil, assistance, communication des pièces, garanties de l'équité du procès."
+     },
+     {
+      "code": "escroquerie",
+      "label": "Escroquerie et fraude",
+      "icon": "💰",
+      "score": 7.0,
+      "confidence": 0.17,
+      "matches": 2,
+      "evidence": [
+       "Le 30 avril 2026, la chambre de l'instruction a placé M. Alpha en détention provisoire et l'a mis en accusation devant la cour d'appel de Grand-Rivage pour vol avec violence en bande organisée, escroquerie et faux et usage de faux."
+      ],
+      "note": "Escroquerie, abus de confiance, détournement, faux, blanchiment."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : Le placement en garde à vue d'une personne majeure sans prolongation préalable viole l'article 62 du code de procédure pénale.",
+      "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue",
+      "Mais sur le moyen tiré de l'absence d'avocat lors de l'audition"
+     ],
+     "solution": [
+      "REJETTE le pourvoi."
+     ],
+     "motifs": [
+      "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue :",
+      "en conséquence, il y a lieu à l'évidence de prononcer l'annulation de la procédure.",
+      "Mais sur le moyen tiré de l'absence d'avocat lors de l'audition :"
+     ],
+     "moyens": [
+      "le placement en garde à vue de M. Alpha a été effectué sans prolongation préalable, en violation de l'article 62 du code de procédure pénale;",
+      "l'audition de M. Alpha s'est déroulée sans la présence d'un avocat, en violation de l'article 63-2 du code de procédure pénale;",
+      "subsidiairement, la cour d'appel a requalifié les faits de tentative de vol en vol avec violence en se fondant sur des témoignages non recoupés."
+     ],
+     "apport": [],
+     "textes": [
+      "Code de procédure pénale - Article 62",
+      "Code de procédure pénale - Article 63-2",
+      "Code de procédure pénale - Article 431"
+     ]
+    },
+    "solution_label": "Rejet du pourvoi",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : Le placement en garde à vue d'une personne majeure sans prolongation préalable viole l'article 62 du code de procédure pénale.",
+     "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue",
+     "Mais sur le moyen tiré de l'absence d'avocat lors de l'audition"
+    ],
+    "solution_texte": [
+     "REJETTE le pourvoi."
+    ],
+    "motifs": [
+     "Sur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue :",
+     "en conséquence, il y a lieu à l'évidence de prononcer l'annulation de la procédure.",
+     "Mais sur le moyen tiré de l'absence d'avocat lors de l'audition :"
+    ],
+    "citations": [],
+    "moyens": [
+     "le placement en garde à vue de M. Alpha a été effectué sans prolongation préalable, en violation de l'article 62 du code de procédure pénale;",
+     "l'audition de M. Alpha s'est déroulée sans la présence d'un avocat, en violation de l'article 63-2 du code de procédure pénale;",
+     "subsidiairement, la cour d'appel a requalifié les faits de tentative de vol en vol avec violence en se fondant sur des témoignages non recoupés."
+    ],
+    "textes_appliques": [
+     "Code de procédure pénale - Article 62",
+     "Code de procédure pénale - Article 63-2",
+     "Code de procédure pénale - Article 431"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 424
+      }
+     ],
+     "expose": [
+      {
+       "start": 426,
+       "end": 1392
+      }
+     ],
+     "moyens": [
+      {
+       "start": 1394,
+       "end": 1877
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1879,
+       "end": 2976
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 2978,
+       "end": 2997
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code de procédure pénale - Article 62",
+      "url": "https://www.legifrance.gouv.fr/"
+     },
+     {
+      "title": "Code de procédure pénale - Article 63-2",
+      "url": "https://www.legifrance.gouv.fr/"
+     },
+     {
+      "title": "Code de procédure pénale - Article 431",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 61, 62, 63, 64 et 431 du code de procédure pénale;\n\nLa chambre criminelle, vu les articles 62 et 63 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 14 mai 2026, qui a produit entre les parties le\ndispositif suivant :\n\nLe 12 février 2026 à 6 heures 20, M. Alpha a fait l'objet d'une interception sur le domaine public, à la suite d'un signalement. Les officiers de police judiciaire l'ont conduit au commissariat central à 6 heures 35. Aucune prolongation préalable de son placement en garde à vue n'a été sollicitée ni obtenue. M. Alpha a été entendu sans la présence d'un avocat, puis présenté le 13 février 2026 au procureur de la République, qui a requis la prolongation de sa garde à vue pour quarante-huit heures additionnelles, mesure autorisée par le président du tribunal judiciaire.\n\nLors de cette audition, M. Alpha a déclaré avoir participé à un cambriolage et signé deux commandes, ce qu'il a ensuite contesté devant le juge d'instruction.\n\nLe 30 avril 2026, la chambre de l'instruction a placé M. Alpha en détention provisoire et l'a mis en accusation devant la cour d'appel de Grand-Rivage pour vol avec violence en bande organisée, escroquerie et faux et usage de faux.\n\nLes moyens soulevés par le pourvoi sont les suivants.\n\n1°/ le placement en garde à vue de M. Alpha a été effectué sans prolongation préalable, en violation de l'article 62 du code de procédure pénale;\n\n2°/ l'audition de M. Alpha s'est déroulée sans la présence d'un avocat, en violation de l'article 63-2 du code de procédure pénale;\n\n3°/ subsidiairement, la cour d'appel a requalifié les faits de tentative de vol en vol avec violence en se fondant sur des témoignages non recoupés.\n\nSur la recevabilité du pourvoi et sur le moyen tiré de l'illégalité de la garde à vue :\n\n1°/ l'article 62 du code de procédure pénale dispose que, lorsqu'une personne majeure est interpellée, elle ne peut être retenue que s'il existe à son encontre des circonstances Objectives graves, constitutives ou non, de nature à justifier son placement en garde à vue;\n\n2°/ il résulte de la procédure qu'aucun élément objectif ne justifiait le placement en garde à vue au moment de l'interpellation;\n\n3°/ l'absence de prolongation préalable a nécessairement eu une influence sur la suite de la procédure, puisque les aveux recueillis lors de cette audition ont été le point de départ des poursuites;\n\n4°/ en conséquence, il y a lieu à l'évidence de prononcer l'annulation de la procédure.\n\nMais sur le moyen tiré de l'absence d'avocat lors de l'audition :\n\n5°/ aux termes de l'article 63-2 du code de procédure pénale, la personne gardée à vue a droit à être assistée d'un avocat lors de ses entretiens, sauf exception coordonnée;\n\n6°/ aucune exception n'étant établie, le droit d'assistance a été méconnu.\n\nREJETTE le pourvoi.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 14 mai 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "Le placement en garde à vue d'une personne majeure sans prolongation préalable viole l'article 62 du code de procédure pénale."
+     }
+    ]
+   }
+  },
+  {
+   "meta": {
+    "id": "demo0000000000000000000002",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO02",
+    "number": "25-87.441",
+    "numbers": [
+     "25-87.441"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-25",
+    "type": "arret",
+    "solution": "cassation",
+    "solution_label": "Cassation de l'arrêt d'appel",
+    "publication": [
+     "b"
+    ],
+    "publication_labels": [
+     "Publié au bulletin (B)"
+    ],
+    "au_bulletin": true,
+    "au_rapport": false,
+    "summary": "Le juge des libertés et de la détention ne peut ordonner le maintien en détention provisoire sans réexaminer le caractère réel du risque de récidive.",
+    "particulier_interet": true,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000002",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Droit des personnes",
+     "Liberté d'aller et venir",
+     "Procédure pénale"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000002",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO02",
+     "number": "25-87.441",
+     "numbers": [
+      "25-87.441"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-25",
+     "type": "arret",
+     "solution": "cassation",
+     "solution_label": "Cassation de l'arrêt d'appel",
+     "publication": [
+      "b"
+     ],
+     "publication_labels": [
+      "Publié au bulletin (B)"
+     ],
+     "au_bulletin": true,
+     "au_rapport": false,
+     "summary": "Le juge des libertés et de la détention ne peut ordonner le maintien en détention provisoire sans réexaminer le caractère réel du risque de récidive.",
+     "particulier_interet": true,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000002",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Droit des personnes",
+      "Liberté d'aller et venir",
+      "Procédure pénale"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "detention_provisoire",
+      "label": "Détention provisoire",
+      "icon": "🔒",
+      "score": 31.6,
+      "confidence": 0.79,
+      "matches": 8,
+      "evidence": [
+       "/ aux termes de l'article 187-1 du code de procédure pénale, le juge des libertés et de la détention statue sur le maintien de la détention provisoire en tenant compte des éléments de personnalité et en vérifiant qu'il n'existe aucune raison grave de récidive;",
+       "/ le maintien en détention provisoire a été décidé sans réexamen du risque de récidive ni des considérations de la personnalité;"
+      ],
+      "note": "Placement, maintien, prolongation, contrôle de la légalité ou Quantum de la détention provisoire."
+     },
+     {
+      "code": "recidive",
+      "label": "Récidive",
+      "icon": "🔁",
+      "score": 21.3,
+      "confidence": 0.53,
+      "matches": 5,
+      "evidence": [
+       "Sur les moyens tirés du défaut de réexamen du risque de récidive :",
+       "/ le maintien en détention provisoire a été décidé sans réexamen du risque de récidive ni des considérations de la personnalité;"
+      ],
+      "note": "État de récidive, antériorités, propositions de grâce."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : Le juge des libertés et de la détention ne peut ordonner le maintien en détention provisoire sans réexaminer le caractère réel du risque de récidive.",
+      "Sur les moyens tirés du défaut de réexamen du risque de récidive",
+      "Mais sur le moyen tiré de la disproportion de la peine"
+     ],
+     "solution": [
+      "CASSE ET ANNULE, en tous ses dispositions, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 2 juin 2026, qui viole l'article 187-1 du code de procédure pénale et n'a pas motivé son maintien en détention provisoire;",
+      "Renvoie l'affaire au juge des libertés et de la détention de Grand-Rivage, en l'état."
+     ],
+     "motifs": [
+      "Mais sur le moyen tiré de la disproportion de la peine :",
+      "Sur les moyens tirés du défaut de réexamen du risque de récidive :",
+      "aux termes de l'article 187-1 du code de procédure pénale, le juge des libertés et de la détention statue sur le maintien de la détention provisoire en tenant compte des éléments de personnalité et en vérifiant qu'il n'existe aucune raison grave de récidive;",
+      "il ne peut se borner à reprendre les motifs de la décision de placement;",
+      "l'absence de réexamen du risque de récidive vicie le dispositif;",
+      "l'ordonnance est dépourvue de motivation en ce qu'elle ne répond pas à l'argument tiré de l'absence de perspective d'insertion ou de réinsertion."
+     ],
+     "moyens": [
+      "le maintien en détention provisoire a été décidé sans réexamen du risque de récidive ni des considérations de la personnalité;",
+      "l'ordonnance n'a pas été motivée au regard de l'article 187-1 du code de procédure pénale;",
+      "subsidiairement, la peine prononcée est disproportionnée."
+     ],
+     "apport": [],
+     "textes": [
+      "Code de procédure pénale - Article 145",
+      "Code de procédure pénale - Article 187-1"
+     ]
+    },
+    "solution_label": "Cassation de l'arrêt d'appel",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : Le juge des libertés et de la détention ne peut ordonner le maintien en détention provisoire sans réexaminer le caractère réel du risque de récidive.",
+     "Sur les moyens tirés du défaut de réexamen du risque de récidive",
+     "Mais sur le moyen tiré de la disproportion de la peine"
+    ],
+    "solution_texte": [
+     "CASSE ET ANNULE, en tous ses dispositions, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 2 juin 2026, qui viole l'article 187-1 du code de procédure pénale et n'a pas motivé son maintien en détention provisoire;",
+     "Renvoie l'affaire au juge des libertés et de la détention de Grand-Rivage, en l'état."
+    ],
+    "motifs": [
+     "Mais sur le moyen tiré de la disproportion de la peine :",
+     "Sur les moyens tirés du défaut de réexamen du risque de récidive :",
+     "aux termes de l'article 187-1 du code de procédure pénale, le juge des libertés et de la détention statue sur le maintien de la détention provisoire en tenant compte des éléments de personnalité et en vérifiant qu'il n'existe aucune raison grave de récidive;",
+     "il ne peut se borner à reprendre les motifs de la décision de placement;",
+     "l'absence de réexamen du risque de récidive vicie le dispositif;",
+     "l'ordonnance est dépourvue de motivation en ce qu'elle ne répond pas à l'argument tiré de l'absence de perspective d'insertion ou de réinsertion."
+    ],
+    "citations": [],
+    "moyens": [
+     "le maintien en détention provisoire a été décidé sans réexamen du risque de récidive ni des considérations de la personnalité;",
+     "l'ordonnance n'a pas été motivée au regard de l'article 187-1 du code de procédure pénale;",
+     "subsidiairement, la peine prononcée est disproportionnée."
+    ],
+    "textes_appliques": [
+     "Code de procédure pénale - Article 145",
+     "Code de procédure pénale - Article 187-1"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 419
+      }
+     ],
+     "expose": [
+      {
+       "start": 421,
+       "end": 971
+      }
+     ],
+     "moyens": [
+      {
+       "start": 973,
+       "end": 1304
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1306,
+       "end": 2116
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 2118,
+       "end": 2426
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code de procédure pénale - Article 145",
+      "url": "https://www.legifrance.gouv.fr/"
+     },
+     {
+      "title": "Code de procédure pénale - Article 187-1",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 145, 187-1 et 202-1 du code de procédure pénale;\n\nLa chambre criminelle, vu les articles 187-1 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 2 juin 2026, qui a produit entre les parties le\ndispositif suivant :\n\nM. Bravo, né en 1991, a été mis en examen pour vol avec violence et extorsion en bande organisée. Le maintien en détention provisoire a été prononcé le 8 juillet 2026 par le juge des libertés et de la détention, sans réexamen du risque de récidive ni des considérations relatives à la personnalité, le juge se bornant à reprendre les motifs de l'ordonnance de placement.\n\nIl a saisi le juge d'instruction, puis a interjeté appel devant la chambre de l'instruction, qui a rejeté sa requête. Condamné à huit ans d'emprisonnement, il a formé un pourvoi.\n\nLes moyens du pourvoi sont les suivants.\n\n1°/ le maintien en détention provisoire a été décidé sans réexamen du risque de récidive ni des considérations de la personnalité;\n\n2°/ l'ordonnance n'a pas été motivée au regard de l'article 187-1 du code de procédure pénale;\n\n3°/ subsidiairement, la peine prononcée est disproportionnée.\n\nSur les moyens tirés du défaut de réexamen du risque de récidive :\n\n1°/ aux termes de l'article 187-1 du code de procédure pénale, le juge des libertés et de la détention statue sur le maintien de la détention provisoire en tenant compte des éléments de personnalité et en vérifiant qu'il n'existe aucune raison grave de récidive;\n\n2°/ il ne peut se borner à reprendre les motifs de la décision de placement;\n\n3°/ l'absence de réexamen du risque de récidive vicie le dispositif;\n\n4°/ l'ordonnance est dépourvue de motivation en ce qu'elle ne répond pas à l'argument tiré de l'absence de perspective d'insertion ou de réinsertion.\n\nMais sur le moyen tiré de la disproportion de la peine :\n\n5°/ tenant compte de la personnalité du condamné et de sa situation, la peine de huit ans d'emprisonnement est excédante.\n\nCASSE ET ANNULE, en tous ses dispositions, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 2 juin 2026, qui viole l'article 187-1 du code de procédure pénale et n'a pas motivé son maintien en détention provisoire;\n\nRenvoie l'affaire au juge des libertés et de la détention de Grand-Rivage, en l'état.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 2 juin 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "Le juge des libertés et de la détention ne peut ordonner le maintien en détention provisoire sans réexaminer le caractère réel du risque de récidive."
+     }
+    ]
+   }
+  },
+  {
+   "meta": {
+    "id": "demo0000000000000000000003",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO03",
+    "number": "25-74.019",
+    "numbers": [
+     "25-74.019"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-23",
+    "type": "arret",
+    "solution": "rejet",
+    "solution_label": "Rejet du pourvoi",
+    "publication": [],
+    "publication_labels": [],
+    "au_bulletin": false,
+    "au_rapport": false,
+    "summary": "La requalification en association de malfaiteurs voyous requiert une activité organisée, non résultant de la seule juxtaposition d'infractions.",
+    "particulier_interet": false,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000003",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Droit pénal",
+     "Responsabilité pénale"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000003",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO03",
+     "number": "25-74.019",
+     "numbers": [
+      "25-74.019"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-23",
+     "type": "arret",
+     "solution": "rejet",
+     "solution_label": "Rejet du pourvoi",
+     "publication": [],
+     "publication_labels": [],
+     "au_bulletin": false,
+     "au_rapport": false,
+     "summary": "La requalification en association de malfaiteurs voyous requiert une activité organisée, non résultant de la seule juxtaposition d'infractions.",
+     "particulier_interet": false,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000003",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Droit pénal",
+      "Responsabilité pénale"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "qualification",
+      "label": "Qualification de l'infraction",
+      "icon": "🏷",
+      "score": 27.2,
+      "confidence": 0.68,
+      "matches": 6,
+      "evidence": [
+       "Sur le moyen tiré de l'absence de base légale de la requalification :",
+       "/ la requalification en association de malfaiteurs voyous est dénuée de base légale;"
+      ],
+      "note": "Choix de la qualification juridique, discussion des éléments constitutifs."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : La requalification en association de malfaiteurs voyous requiert une activité organisée, non résultant de la seule juxtaposition d'infractions.",
+      "Sur le moyen tiré de l'absence de base légale de la requalification"
+     ],
+     "solution": [
+      "REJETTE le pourvoi."
+     ],
+     "motifs": [
+      "Sur le moyen tiré de l'absence de base légale de la requalification :",
+      "en l'état, la cour d'appel a exactement déduit que les faits établis ne permettaient pas de caractériser l'infraction retenue, sans qu'il y ait lieu de lui reprocher une erreur de qualification."
+     ],
+     "moyens": [
+      "la requalification en association de malfaiteurs voyous est dénuée de base légale;",
+      "l'existence d'une entente ou d'un groupement de personnes n'est pas établie."
+     ],
+     "apport": [],
+     "textes": [
+      "Code de procédure pénale - Article 202-1"
+     ]
+    },
+    "solution_label": "Rejet du pourvoi",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : La requalification en association de malfaiteurs voyous requiert une activité organisée, non résultant de la seule juxtaposition d'infractions.",
+     "Sur le moyen tiré de l'absence de base légale de la requalification"
+    ],
+    "solution_texte": [
+     "REJETTE le pourvoi."
+    ],
+    "motifs": [
+     "Sur le moyen tiré de l'absence de base légale de la requalification :",
+     "en l'état, la cour d'appel a exactement déduit que les faits établis ne permettaient pas de caractériser l'infraction retenue, sans qu'il y ait lieu de lui reprocher une erreur de qualification."
+    ],
+    "citations": [],
+    "moyens": [
+     "la requalification en association de malfaiteurs voyous est dénuée de base légale;",
+     "l'existence d'une entente ou d'un groupement de personnes n'est pas établie."
+    ],
+    "textes_appliques": [
+     "Code de procédure pénale - Article 202-1"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 416
+      }
+     ],
+     "expose": [
+      {
+       "start": 418,
+       "end": 827
+      }
+     ],
+     "moyens": [
+      {
+       "start": 829,
+       "end": 1039
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1041,
+       "end": 1876
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 1878,
+       "end": 1897
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code de procédure pénale - Article 202-1",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 202-1 et 323-8 du code de procédure pénale;\n\nLa chambre criminelle, vu les articles 202-1 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 20 avril 2026, qui a produit entre les parties le\ndispositif suivant :\n\nM. Charlie est nommé à l'audience du tribunal correctionnel de Grand-Rivage d'un procès-verbal pour vol avec violence en bande organisée. La cour d'appel a requalifié les faits en association de malfaiteurs voyous.\n\nPour se rétracter, le condamné soutient que la seule accumulation d'infractions personnelles ne suffit pas à caractériser un groupement de personnes ou une entente, faute d'activité coordonnée.\n\nLes moyens du pourvoi sont les suivants.\n\n1°/ la requalification en association de malfaiteurs voyous est dénuée de base légale;\n\n2°/ l'existence d'une entente ou d'un groupement de personnes n'est pas établie.\n\nSur le moyen tiré de l'absence de base légale de la requalification :\n\n1°/ l'article 202-1 du code de procédure pénale n'autorise la requalification que si les faits chargeant la qualification nouvelle constituent une infraction différente;\n\n2°/ la différence substantielle tient à la conformité des faits aux éléments de l'infraction;\n\n3°/ l'association de malfaiteurs voyous suppose une activité organisée et un concert intentionnel dans le temps;\n\n4°/ la seule juxtaposition d'infractions distinctes commises par les mêmes personnes ne démontre pas l'existence d'une telle entente;\n\n5°/ en l'état, la cour d'appel a exactement déduit que les faits établis ne permettaient pas de caractériser l'infraction retenue, sans qu'il y ait lieu de lui reprocher une erreur de qualification.\n\nLa requalification opérée doit donc être écartée.\n\nREJETTE le pourvoi.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 20 avril 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "La requalification en association de malfaiteurs voyous requiert une activité organisée, non résultant de la seule juxtaposition d'infractions."
+     }
+    ]
+   }
+  },
+  {
+   "meta": {
+    "id": "demo0000000000000000000004",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO04",
+    "number": "25-81.765",
+    "numbers": [
+     "25-81.765"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-26",
+    "type": "arret",
+    "solution": "rejet",
+    "solution_label": "Rejet du pourvoi",
+    "publication": [
+     "b"
+    ],
+    "publication_labels": [
+     "Publié au bulletin (B)"
+    ],
+    "au_bulletin": true,
+    "au_rapport": false,
+    "summary": "Le juge d'instruction peut lever le secret médical lorsque la personne suspectée s'en est expressément excusée, la levée étant alors limitée aux besoins de l'enquête.",
+    "particulier_interet": false,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000004",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Santé publique",
+     "Droit des personnes"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000004",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO04",
+     "number": "25-81.765",
+     "numbers": [
+      "25-81.765"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-26",
+     "type": "arret",
+     "solution": "rejet",
+     "solution_label": "Rejet du pourvoi",
+     "publication": [
+      "b"
+     ],
+     "publication_labels": [
+      "Publié au bulletin (B)"
+     ],
+     "au_bulletin": true,
+     "au_rapport": false,
+     "summary": "Le juge d'instruction peut lever le secret médical lorsque la personne suspectée s'en est expressément excusée, la levée étant alors limitée aux besoins de l'enquête.",
+     "particulier_interet": false,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000004",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Santé publique",
+      "Droit des personnes"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "sante",
+      "label": "Santé publique et médecine",
+      "icon": "🩺",
+      "score": 26.0,
+      "confidence": 0.65,
+      "matches": 6,
+      "evidence": [
+       "Sur le moyen tiré de la violation du secret médical :",
+       "/ le juge d'instruction a violé le secret médical et le secret des discussions en communiquant le dossier médical à l'expert;"
+      ],
+      "note": "ITT, victimation, blessures, secret médical, santé publique."
+     },
+     {
+      "code": "droits_defense",
+      "label": "Droits de la défense",
+      "icon": "⚖️",
+      "score": 8.2,
+      "confidence": 0.2,
+      "matches": 2,
+      "evidence": [
+       "/ c'est au juge d'instruction, seul compétent pour apprécier les cas et circonstances où les communications sont de droit ou d'opportunité, qu'il appartient d'ordonner ou non la communication du dossier médical.",
+       "Le juge d'instruction a ordonné, sur réquisition du procureur, la communication du dossier médical du patient à l'expert."
+      ],
+      "note": "Intervention du conseil, assistance, communication des pièces, garanties de l'équité du procès."
+     },
+     {
+      "code": "preuve",
+      "label": "Preuve, expertise, aveu",
+      "icon": "🔬",
+      "score": 7.2,
+      "confidence": 0.18,
+      "matches": 2,
+      "evidence": [
+       "/ le juge d'instruction a violé le secret médical et le secret des discussions en communiquant le dossier médical à l'expert;",
+       "Le juge d'instruction a ordonné, sur réquisition du procureur, la communication du dossier médical du patient à l'expert."
+      ],
+      "note": "Valeur probante des expertises, de l'aveu, des traces et techniques de recherche."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : Le juge d'instruction peut lever le secret médical lorsque la personne suspectée s'en est expressément excusée, la levée étant alors limitée aux besoins de l'enquête.",
+      "Sur le moyen tiré de la violation du secret médical"
+     ],
+     "solution": [
+      "REJETTE le pourvoi."
+     ],
+     "motifs": [
+      "Sur le moyen tiré de la violation du secret médical :",
+      "aux termes de l'article 77-1 du code de procédure pénale, lorsque la personne suspectée de complicité s'acquitte de son secret médical, le juge d'instruction peut ordonner, pour les besoins de l'enquête, que les dossiers soient communiqués aux médecins amplifiers;",
+      "la décharge écrite du médecin mentionne expressément son accord pour la levée du secret médical;",
+      "la communication a été limitée au seul dossier du patient concerné et à la durée de l'instruction;",
+      "dès lors, il n'y a pas lieu de censurer la procédure sur ce chef;",
+      "c'est au juge d'instruction, seul compétent pour apprécier les cas et circonstances où les communications sont de droit ou d'opportunité, qu'il appartient d'ordonner ou non la communication du dossier médical."
+     ],
+     "moyens": [
+      "le juge d'instruction a violé le secret médical et le secret des discussions en communiquant le dossier médical à l'expert;",
+      "aucune exception n'était prévue par la loi;",
+      "la mesure a été prise sans l'accord du médecin."
+     ],
+     "apport": [],
+     "textes": [
+      "Code de procédure pénale - Article 77-1"
+     ]
+    },
+    "solution_label": "Rejet du pourvoi",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : Le juge d'instruction peut lever le secret médical lorsque la personne suspectée s'en est expressément excusée, la levée étant alors limitée aux besoins de l'enquête.",
+     "Sur le moyen tiré de la violation du secret médical"
+    ],
+    "solution_texte": [
+     "REJETTE le pourvoi."
+    ],
+    "motifs": [
+     "Sur le moyen tiré de la violation du secret médical :",
+     "aux termes de l'article 77-1 du code de procédure pénale, lorsque la personne suspectée de complicité s'acquitte de son secret médical, le juge d'instruction peut ordonner, pour les besoins de l'enquête, que les dossiers soient communiqués aux médecins amplifiers;",
+     "la décharge écrite du médecin mentionne expressément son accord pour la levée du secret médical;",
+     "la communication a été limitée au seul dossier du patient concerné et à la durée de l'instruction;",
+     "dès lors, il n'y a pas lieu de censurer la procédure sur ce chef;",
+     "c'est au juge d'instruction, seul compétent pour apprécier les cas et circonstances où les communications sont de droit ou d'opportunité, qu'il appartient d'ordonner ou non la communication du dossier médical."
+    ],
+    "citations": [],
+    "moyens": [
+     "le juge d'instruction a violé le secret médical et le secret des discussions en communiquant le dossier médical à l'expert;",
+     "aucune exception n'était prévue par la loi;",
+     "la mesure a été prise sans l'accord du médecin."
+    ],
+    "textes_appliques": [
+     "Code de procédure pénale - Article 77-1"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 409
+      }
+     ],
+     "expose": [
+      {
+       "start": 411,
+       "end": 798
+      }
+     ],
+     "moyens": [
+      {
+       "start": 800,
+       "end": 1071
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1073,
+       "end": 1888
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 1890,
+       "end": 1909
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code de procédure pénale - Article 77-1",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 77-1 et 100 du code de procédure pénale;\n\nLa chambre criminelle, vu les articles 77-1 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 6 mai 2026, qui a produit entre les parties le\ndispositif suivant :\n\nM. Delta, médecin, est mis en examen pour atteinte contre la vie sur la personne d'un patient de son service, dispensé d'un traitement au bénéfice duquel il est décédé.\n\nLe juge d'instruction a ordonné, sur réquisition du procureur, la communication du dossier médical du patient à l'expert. Le médecin soutient que cette mesure a enfreint le secret médical et le secret des discussions.\n\nLes moyens du pourvoi sont les suivants.\n\n1°/ le juge d'instruction a violé le secret médical et le secret des discussions en communiquant le dossier médical à l'expert;\n\n2°/ aucune exception n'était prévue par la loi;\n\n3°/ la mesure a été prise sans l'accord du médecin.\n\nSur le moyen tiré de la violation du secret médical :\n\n1°/ aux termes de l'article 77-1 du code de procédure pénale, lorsque la personne suspectée de complicité s'acquitte de son secret médical, le juge d'instruction peut ordonner, pour les besoins de l'enquête, que les dossiers soient communiqués aux médecins amplifiers;\n\n2°/ la décharge écrite du médecin mentionne expressément son accord pour la levée du secret médical;\n\n3°/ la communication a été limitée au seul dossier du patient concerné et à la durée de l'instruction;\n\n4°/ dès lors, il n'y a pas lieu de censurer la procédure sur ce chef;\n\n5°/ c'est au juge d'instruction, seul compétent pour apprécier les cas et circonstances où les communications sont de droit ou d'opportunité, qu'il appartient d'ordonner ou non la communication du dossier médical.\n\nREJETTE le pourvoi.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 6 mai 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "Le juge d'instruction peut lever le secret médical lorsque la personne suspectée s'en est expressément excusée, la levée étant alors limitée aux besoins de l'enquête."
+     }
+    ]
+   }
+  },
+  {
+   "meta": {
+    "id": "demo0000000000000000000005",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO05",
+    "number": "25-69.338",
+    "numbers": [
+     "25-69.338"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-22",
+    "type": "arret",
+    "solution": "cassation",
+    "solution_label": "Cassation de l'arrêt d'appel",
+    "publication": [],
+    "publication_labels": [],
+    "au_bulletin": false,
+    "au_rapport": false,
+    "summary": "Le délit de revente de stupéfiants est caractérisé dès lors que l'accusé s'est livré à une revalorisation du produit saisi, sans qu'il soit besoin d'établir un usage personnel.",
+    "particulier_interet": false,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000005",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Santé publique",
+     "Droit pénal"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000005",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO05",
+     "number": "25-69.338",
+     "numbers": [
+      "25-69.338"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-22",
+     "type": "arret",
+     "solution": "cassation",
+     "solution_label": "Cassation de l'arrêt d'appel",
+     "publication": [],
+     "publication_labels": [],
+     "au_bulletin": false,
+     "au_rapport": false,
+     "summary": "Le délit de revente de stupéfiants est caractérisé dès lors que l'accusé s'est livré à une revalorisation du produit saisi, sans qu'il soit besoin d'établir un usage personnel.",
+     "particulier_interet": false,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000005",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Santé publique",
+      "Droit pénal"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "stupefiants",
+      "label": "Stupéfiants",
+      "icon": "💊",
+      "score": 32.0,
+      "confidence": 0.8,
+      "matches": 8,
+      "evidence": [
+       "/ aux termes de l'article L. 628-1 du code de la santé publique, le délit de revente de stupéfiants est constitué dès lors que l'accusé s'est livré à une revalorisation du produit stupéfiant saisi;",
+       "CASSE ET ANNULE, en tout ce qu'il a statué sur la qualification d'usage illicite de stupéfiants, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 12 mars 2026."
+      ],
+      "note": "Infractions stupéfiants, substitution, toxicomanie."
+     },
+     {
+      "code": "qualification",
+      "label": "Qualification de l'infraction",
+      "icon": "🏷",
+      "score": 13.3,
+      "confidence": 0.33,
+      "matches": 3,
+      "evidence": [
+       "Mais sur l'absence de qualification d'usage illicite :",
+       "CASSE ET ANNULE, en tout ce qu'il a statué sur la qualification d'usage illicite de stupéfiants, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 12 mars 2026."
+      ],
+      "note": "Choix de la qualification juridique, discussion des éléments constitutifs."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : Le délit de revente de stupéfiants est caractérisé dès lors que l'accusé s'est livré à une revalorisation du produit saisi, sans qu'il soit besoin d'établir un usage personnel.",
+      "La cour d'appel a requalifié les faits de revente en infraction de revente de stupéfiants et d'usage illicite de stupéfiants, en retenant que le volume important saisi ne pouvait être expliqué par un usage personnel."
+     ],
+     "solution": [
+      "CASSE ET ANNULE, en tout ce qu'il a statué sur la qualification d'usage illicite de stupéfiants, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 12 mars 2026."
+     ],
+     "motifs": [
+      "aux termes de l'article L. 628-1 du code de la santé publique, le délit de revente de stupéfiants est constitué dès lors que l'accusé s'est livré à une revalorisation du produit stupéfiant saisi;",
+      "ni le prix d'achat, ni le prix de revente n'ont besoin d'être déterminés avec certitude;",
+      "la quantité saisie, très supérieure aux besoins d'un usage personnel, conduise à elle seule dans les circonstances de la cause, à déduire le caractère habituel et constant du comportement de l'intéressé;",
+      "il n'y a pas lieu de s'arrêter à l'absence d'usage personnel."
+     ],
+     "moyens": [
+      "la revente n'est pas caractérisée, faute de preuve de l'opération de revente;",
+      "subsidiairement, l'usage personnel est établi et doit être retenu."
+     ],
+     "apport": [],
+     "textes": [
+      "Code de la santé publique - Article L. 628-1",
+      "Code pénal - Article 222-1"
+     ]
+    },
+    "solution_label": "Cassation de l'arrêt d'appel",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : Le délit de revente de stupéfiants est caractérisé dès lors que l'accusé s'est livré à une revalorisation du produit saisi, sans qu'il soit besoin d'établir un usage personnel.",
+     "La cour d'appel a requalifié les faits de revente en infraction de revente de stupéfiants et d'usage illicite de stupéfiants, en retenant que le volume important saisi ne pouvait être expliqué par un usage personnel."
+    ],
+    "solution_texte": [
+     "CASSE ET ANNULE, en tout ce qu'il a statué sur la qualification d'usage illicite de stupéfiants, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 12 mars 2026."
+    ],
+    "motifs": [
+     "aux termes de l'article L. 628-1 du code de la santé publique, le délit de revente de stupéfiants est constitué dès lors que l'accusé s'est livré à une revalorisation du produit stupéfiant saisi;",
+     "ni le prix d'achat, ni le prix de revente n'ont besoin d'être déterminés avec certitude;",
+     "la quantité saisie, très supérieure aux besoins d'un usage personnel, conduise à elle seule dans les circonstances de la cause, à déduire le caractère habituel et constant du comportement de l'intéressé;",
+     "il n'y a pas lieu de s'arrêter à l'absence d'usage personnel."
+    ],
+    "citations": [],
+    "moyens": [
+     "la revente n'est pas caractérisée, faute de preuve de l'opération de revente;",
+     "subsidiairement, l'usage personnel est établi et doit être retenu."
+    ],
+    "textes_appliques": [
+     "Code de la santé publique - Article L. 628-1",
+     "Code pénal - Article 222-1"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 432
+      }
+     ],
+     "expose": [
+      {
+       "start": 434,
+       "end": 1021
+      }
+     ],
+     "moyens": [
+      {
+       "start": 1023,
+       "end": 1218
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1220,
+       "end": 2228
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 2230,
+       "end": 2396
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code de la santé publique - Article L. 628-1",
+      "url": "https://www.legifrance.gouv.fr/"
+     },
+     {
+      "title": "Code pénal - Article 222-1",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 222-1, L. 628-1 et L. 630-1 du code de la santé publique;\n\nLa chambre criminelle, vu les articles L. 628-1 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 12 mars 2026, qui a produit entre les parties le\ndispositif suivant :\n\nLors de sa garde à vue, M. Echo a déclaré avoir acheté vingt grammes de cannabis pour cent cinquante euros et avoir procédé à une première revente pour dix euros. Les policiers ont trouvé dans son véhicule cent quatre-vingts grammes de produits de cannabis et quatre-vingts euros en espèces. Il a déclaré que cette quantité était destinée à sa consommation personnelle.\n\nLa cour d'appel a requalifié les faits de revente en infraction de revente de stupéfiants et d'usage illicite de stupéfiants, en retenant que le volume important saisi ne pouvait être expliqué par un usage personnel.\n\nLes moyens du pourvoi sont les suivants.\n\n1°/ la revente n'est pas caractérisée, faute de preuve de l'opération de revente;\n\n2°/ subsidiairement, l'usage personnel est établi et doit être retenu.\n\nSur l'élément matériel de la revente :\n\n1°/ aux termes de l'article L. 628-1 du code de la santé publique, le délit de revente de stupéfiants est constitué dès lors que l'accusé s'est livré à une revalorisation du produit stupéfiant saisi;\n\n2°/ ni le prix d'achat, ni le prix de revente n'ont besoin d'être déterminés avec certitude;\n\n3°/ l'existence d'une transaction suffit;\n\n4°/ la quantité saisie, très supérieure aux besoins d'un usage personnel, conduise à elle seule dans les circonstances de la cause, à déduire le caractère habituel et constant du comportement de l'intéressé;\n\n5°/ il n'y a pas lieu de s'arrêter à l'absence d'usage personnel.\n\nMais sur l'absence de qualification d'usage illicite :\n\n6°/ l'usage illicite de stupéfiants, qui est une infraction clandestine de danger constant, n'est établi par aucun élément concordant;\n\n7°/ il doit être renvoyé au juge du fond pour qu'il se prononce sur ce chef;\n\n8°/ la cour d'appel a donc tort de s'abstenir et a méconnu l'exigence de motivation.\n\nCASSE ET ANNULE, en tout ce qu'il a statué sur la qualification d'usage illicite de stupéfiants, l'arrêt prononcé par la cour d'appel de Grand-Rivage le 12 mars 2026.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 12 mars 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "Le délit de revente de stupéfiants est caractérisé dès lors que l'accusé s'est livré à une revalorisation du produit saisi, sans qu'il soit besoin d'établir un usage personnel."
+     }
+    ]
+   }
+  },
+  {
+   "meta": {
+    "id": "demo0000000000000000000006",
+    "ecli": "ECLI:FR:CCASS:2026:DEMO06",
+    "number": "25-90.112",
+    "numbers": [
+     "25-90.112"
+    ],
+    "chamber": "crim",
+    "formation": "chambre criminelle",
+    "decision_date": "2026-09-26",
+    "type": "arret",
+    "solution": "rejet",
+    "solution_label": "Rejet du pourvoi",
+    "publication": [],
+    "publication_labels": [],
+    "au_bulletin": false,
+    "au_rapport": false,
+    "summary": "L'escroquerie est caractérisée dès lors que la manœuvre dolosive, les dceptions et le préjudice subséquent sont établis, sans que le mélange de faits soit pertinent.",
+    "particulier_interet": false,
+    "extrait_partiel": false,
+    "url": "https://www.courdecassation.fr/decision/demo0000000000000000000006",
+    "source": "judilibre",
+    "update_date": null,
+    "themes_officiels": [
+     "Droit pénal",
+     "Responsabilité pénale"
+    ],
+    "nac": null
+   },
+   "analysis": {
+    "meta": {
+     "id": "demo0000000000000000000006",
+     "ecli": "ECLI:FR:CCASS:2026:DEMO06",
+     "number": "25-90.112",
+     "numbers": [
+      "25-90.112"
+     ],
+     "chamber": "crim",
+     "formation": "chambre criminelle",
+     "decision_date": "2026-09-26",
+     "type": "arret",
+     "solution": "rejet",
+     "solution_label": "Rejet du pourvoi",
+     "publication": [],
+     "publication_labels": [],
+     "au_bulletin": false,
+     "au_rapport": false,
+     "summary": "L'escroquerie est caractérisée dès lors que la manœuvre dolosive, les dceptions et le préjudice subséquent sont établis, sans que le mélange de faits soit pertinent.",
+     "particulier_interet": false,
+     "extrait_partiel": false,
+     "url": "https://www.courdecassation.fr/decision/demo0000000000000000000006",
+     "source": "judilibre",
+     "update_date": null,
+     "themes_officiels": [
+      "Droit pénal",
+      "Responsabilité pénale"
+     ],
+     "nac": null
+    },
+    "themes": [
+     {
+      "code": "escroquerie",
+      "label": "Escroquerie et fraude",
+      "icon": "💰",
+      "score": 16.4,
+      "confidence": 0.41,
+      "matches": 4,
+      "evidence": [
+       "Sur l'élément intentionnel de l'escroquerie :",
+       "M. Foxtrot est accusé d'escroquerie au préjudice de la société Sigma, à la suite de factures impayées et d'un rattachement fictif de charges."
+      ],
+      "note": "Escroquerie, abus de confiance, détournement, faux, blanchiment."
+     }
+    ],
+    "extractive": {
+     "attendu": [
+      "Sommaire de la Cour : L'escroquerie est caractérisée dès lors que la manœuvre dolosive, les dceptions et le préjudice subséquent sont établis, sans que le mélange de faits soit pertinent.",
+      "M. Foxtrot est accusé d'escroquerie au préjudice de la société Sigma, à la suite de factures impayées et d'un rattachement fictif de charges.",
+      "La cour d'appel l'a déclaré coupable d'escroquerie pour la seule facture de quatre-vingt-quatre mille euros contestée."
+     ],
+     "solution": [
+      "REJETTE le pourvoi."
+     ],
+     "motifs": [
+      "la cour d'appel a exactement déduit que les pièces versées établissaient la réalité des manœuvres dolosives et l'existence du préjudice;",
+      "Sur l'élément intentionnel de l'escroquerie :",
+      "l'escroquerie suppose une manœuvre dolosive ou des manœuvres frauduleuses de nature à faire croire à l'existence de faits inexacts ou à la nonexistence de faits réels;",
+      "il suffit que la manœuvre, les déceptions et le préjudice subséquent soient établis;",
+      "la question du mélange de faits est inopérante dès lors que les manœuvres frauduleuses retenues sont en relation avec les sommes dont le versement est contesté;",
+      "l'appréciation souveraine de la valeur des déclarations et des pièces n'encadre pas le contrôle de légalité."
+     ],
+     "moyens": [
+      "les faits retenus se rapportent à des opérations distinctes, dont certaines ont été régularisées;",
+      "la cour d'appel a retenu des éléments sans rapport avec la manœuvre dolosive reprochée;",
+      "les paiements antérieurs à l'assignation justifiaient l'acquittement."
+     ],
+     "apport": [],
+     "textes": [
+      "Code pénal - Article 485",
+      "Code pénal - Article 495"
+     ]
+    },
+    "solution_label": "Rejet du pourvoi",
+    "llm": null,
+    "llm_utilise": false,
+    "fiabilite": "synthese extractive (extraits mot pour mot de l'arrêt)",
+    "portee": [],
+    "attendu": [
+     "Sommaire de la Cour : L'escroquerie est caractérisée dès lors que la manœuvre dolosive, les dceptions et le préjudice subséquent sont établis, sans que le mélange de faits soit pertinent.",
+     "M. Foxtrot est accusé d'escroquerie au préjudice de la société Sigma, à la suite de factures impayées et d'un rattachement fictif de charges.",
+     "La cour d'appel l'a déclaré coupable d'escroquerie pour la seule facture de quatre-vingt-quatre mille euros contestée."
+    ],
+    "solution_texte": [
+     "REJETTE le pourvoi."
+    ],
+    "motifs": [
+     "la cour d'appel a exactement déduit que les pièces versées établissaient la réalité des manœuvres dolosives et l'existence du préjudice;",
+     "Sur l'élément intentionnel de l'escroquerie :",
+     "l'escroquerie suppose une manœuvre dolosive ou des manœuvres frauduleuses de nature à faire croire à l'existence de faits inexacts ou à la nonexistence de faits réels;",
+     "il suffit que la manœuvre, les déceptions et le préjudice subséquent soient établis;",
+     "la question du mélange de faits est inopérante dès lors que les manœuvres frauduleuses retenues sont en relation avec les sommes dont le versement est contesté;",
+     "l'appréciation souveraine de la valeur des déclarations et des pièces n'encadre pas le contrôle de légalité."
+    ],
+    "citations": [],
+    "moyens": [
+     "les faits retenus se rapportent à des opérations distinctes, dont certaines ont été régularisées;",
+     "la cour d'appel a retenu des éléments sans rapport avec la manœuvre dolosive reprochée;",
+     "les paiements antérieurs à l'assignation justifiaient l'acquittement."
+    ],
+    "textes_appliques": [
+     "Code pénal - Article 485",
+     "Code pénal - Article 495"
+    ],
+    "generated_at": "2026-10-01"
+   },
+   "raw": {
+    "zones": {
+     "introduction": [
+      {
+       "start": 0,
+       "end": 399
+      }
+     ],
+     "expose": [
+      {
+       "start": 401,
+       "end": 820
+      }
+     ],
+     "moyens": [
+      {
+       "start": 822,
+       "end": 1133
+      }
+     ],
+     "motivations": [
+      {
+       "start": 1135,
+       "end": 1865
+      }
+     ],
+     "dispositif": [
+      {
+       "start": 1867,
+       "end": 1886
+      }
+     ]
+    },
+    "visa": [
+     {
+      "title": "Code pénal - Article 485",
+      "url": "https://www.legifrance.gouv.fr/"
+     },
+     {
+      "title": "Code pénal - Article 495",
+      "url": "https://www.legifrance.gouv.fr/"
+     }
+    ],
+    "text": "Sur le rapport de M. le conseiller rapporteur.\n\nVu les articles 485 et 495 du code pénal;\n\nLa chambre criminelle, vu les articles 485 du code de procédure pénale,\na lu les moyens urgés par le pourvoi;\n\nLa chambre criminelle statuant en formation de la chambre criminelle, a rendu\nl'arrêt de la cour d'appel de Grand-Rivage du 1er juillet 2026, qui a produit entre les parties le\ndispositif suivant :\n\nM. Foxtrot est accusé d'escroquerie au préjudice de la société Sigma, à la suite de factures impayées et d'un rattachement fictif de charges. La cour d'appel l'a déclaré coupable d'escroquerie pour la seule facture de quatre-vingt-quatre mille euros contestée.\n\nLe condamné soutient que les opérations distinctes ont été régularisées et qu'il a été privé de la possibilité de faire apparaître les compensations opérées.\n\nLes moyens du pourvoi sont les suivants.\n\n1°/ les faits retenus se rapportent à des opérations distinctes, dont certaines ont été régularisées;\n\n2°/ la cour d'appel a retenu des éléments sans rapport avec la manœuvre dolosive reprochée;\n\n3°/ les paiements antérieurs à l'assignation justifiaient l'acquittement.\n\nSur l'élément intentionnel de l'escroquerie :\n\n1°/ l'escroquerie suppose une manœuvre dolosive ou des manœuvres frauduleuses de nature à faire croire à l'existence de faits inexacts ou à la nonexistence de faits réels;\n\n2°/ il suffit que la manœuvre, les déceptions et le préjudice subséquent soient établis;\n\n3°/ la question du mélange de faits est inopérante dès lors que les manœuvres frauduleuses retenues sont en relation avec les sommes dont le versement est contesté;\n\n4°/ la cour d'appel a exactement déduit que les pièces versées établissaient la réalité des manœuvres dolosives et l'existence du préjudice;\n\n5°/ l'appréciation souveraine de la valeur des déclarations et des pièces n'encadre pas le contrôle de légalité.\n\nREJETTE le pourvoi.",
+    "rapprochements": [],
+    "contested": {
+     "title": "Cour d'appel de Grand-Rivage, 1er juillet 2026",
+     "number": "Cour d'appel de Grand-Rivage.999",
+     "url": null
+    },
+    "forward": null,
+    "titlesAndSummaries": [
+     {
+      "title": "L'escroquerie est caractérisée dès lors que la manœuvre dolosive, les dceptions et le préjudice subséquent sont établis, sans que le mélange de faits soit pertinent."
+     }
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+VEILLE HEBDO — CHAMBRE CRIMINELLE
+Cour de cassation, données ouvertes de la DILA
+
+
+1. POUR COMMENCER
+-----------------
+Double-cliquez sur le fichier « Veille criminelle.command ».
+
+Une fenêtre de Terminal s'ouvre et affiche ce qui se passe. Laissez-la
+ouverte jusqu'au message « C'est prêt » : l'interface s'ouvre alors
+automatiquement dans votre navigateur (http://127.0.0.1:8765/).
+
+À la toute première ouverture, le téléchargement des arrêts peut prendre
+quelques minutes. Les ouvertures suivantes sont immédiates.
+
+Vous pouvez ensuite fermer la fenêtre du Terminal : le programme continue de
+tourner tout seul et rouvrira son interface à chaque connexion au Mac.
+
+Si le message « C'est prêt » n'apparaît pas, laissez la fenêtre ouverte et
+lisez ce qui est affiché : l'instruction à suivre y est indiquée.
+
+
+2. À QUOI ÇA SERT
+-----------------
+Chaque semaine, l'outil récupère les arrêts récemment publiés par la chambre
+criminelle de la Cour de cassation, les classe par thème de pratique, signale
+ceux publiés au bulletin, et rédige pour chacun une analyse à partir du texte
+de la Cour. Aucune analyse n'est inventée : chaque extrait cité provient de
+l'arrêt.
+
+Dans l'interface, vous pouvez filtrer par thème, rechercher dans les motifs et
+les textes appliqués, lire le texte intégral d'un arrêt et exporter votre
+sélection en Markdown ou en JSON.
+
+La veille est complétée automatiquement chaque lundi matin.
+
+
+3. OÙ SONT MES DONNÉES
+----------------------
+Tout est dans le dossier « crim-hebdo » de votre dossier personnel :
+
+    ~/crim-hebdo/data/rapports/    les rapports hebdomadaires (Markdown,
+                                   HTML et JSON)
+    ~/crim-hebdo/data/logs/        les journaux techniques
+
+Le dossier « crim-hebdo » du disque image est la copie d'origine : il est
+caché dans la fenêtre du disque image et n'est pas utilisé. C'est celui de
+votre dossier personnel qui contient vos données : ne le supprimez pas si vous
+souhaitez conserver vos rapports.
+
+
+4. OUVRIR ET ARRÊTER
+--------------------
+Ouvrir     double-cliquez « Veille criminelle.command »
+Arrêter    double-cliquez « Arrêter la veille.command »
+
+Le démarrage automatique est supprimé définitivement par la commande
+suivante, depuis le Terminal :
+
+    python3 ~/crim-hebdo/tools/serve_launchd.py uninstall
+
+
+5. SI MACOS BLOQUE QUOI QUE CE SOIT
+-----------------------------------
+Le fichier peut être signalé comme provenant d'un développeur inconnu : macOS
+est strict sur ce point. Dans ce cas, ouvrez le fichier « Lisez-moi.txt »
+depuis le disque image plutôt que par double-clic.
+
+Pour retirer le blocage depuis le Terminal (une seule fois) :
+
+    xattr -dr com.apple.quarantine /Volumes/Veille*
+
+Si une fenêtre de macOS demande d'autoriser Python : Réglages Système →
+Confidentialité et sécurité → cochez Python.
+
+
+6. DÉSINSTALLER
+---------------
+Depuis le Terminal :
+
+    python3 ~/crim-hebdo/tools/serve_launchd.py uninstall
+    python3 ~/crim-hebdo/tools/install.py --uninstall
+
+La première commande désactive le démarrage automatique de l'interface, la
+seconde celui de la mise à jour hebdomadaire.
+
+Pour supprimer aussi les données et les rapports, supprimez ensuite le
+dossier ~/crim-hebdo.
+
+
+Source : données ouvertes de la Cour de cassation, sous licence ouverte 2.0.
+Veille documentaire : elle ne remplace pas la lecture de l'arrêt, qui fait foi.

@@ -1,0 +1,28 @@
+{
+  "_comment": "Aucune configuration n'est necessaire pour fonctionner : la source par defaut est gratuite.",
+  "_source": "dila = donnees ouvertes de la Cour de cassation (echanges.dila.gouv.fr), sans identifiant. piste = API Judilibre, qui exige client_id / client_secret.",
+  "_pieste_acces": "https://piste.gouv.fr/registration -> API Judilibre -> Generer une cle (uniquement si vous choisissez la source piste)",
+
+  "source": "dila",
+
+  "client_id": "",
+  "client_secret": "",
+
+  "use_sandbox": false,
+  "jurisdiction": "cc",
+  "chambers": ["crim"],
+  "enrich_legifrance": false,
+  "only_bulletin": false,
+
+  "_cache": "Dossier des archives DILA telechargees. Videz-le si vous voulez forcer un retelechargement complet.",
+  "cache_dir": "data/cache",
+
+  "_llm": "provider = none | openai | anthropic | ollama. 'none' = extraits verbatim, aucune donnee envoyee a un tiers.",
+  "use_llm": true,
+  "llm": {
+    "provider": "none",
+    "model": "",
+    "api_key": "",
+    "base_url": ""
+  }
+}
