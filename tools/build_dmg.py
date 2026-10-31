@@ -1,8 +1,8 @@
 """Construit l'image disque (DMG) macOS de la veille chambre criminelle.
 
 L'image contient deux lanceurs double-clic, un mode d'emploi et le programme.
-Aucun code n'est compilé ni signé : il n'y a donc rien qui puisse être refusé
-par macOS à l'ouverture, contrairement à une application non signée.
+La construction locale produit une image non signée. Le workflow de publication
+peut signer et notarier le DMG avec un compte Apple Developer ID configuré.
 
 La construction se fait en deux temps :
 

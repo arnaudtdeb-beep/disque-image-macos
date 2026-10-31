@@ -33,13 +33,17 @@ def build_plist(hour: int, minute: int) -> dict:
     """Construit le plist avec les chemins réels de cette installation."""
     logs = ROOT / "data" / "logs"
     logs.mkdir(parents=True, exist_ok=True)
+    environment = {"PYTHONUNBUFFERED": "1"}
+    ca_bundle = os.environ.get("CRIM_HEBDO_CA_BUNDLE")
+    if ca_bundle:
+        environment["CRIM_HEBDO_CA_BUNDLE"] = ca_bundle
     return {
         "Label": LABEL,
         "ProgramArguments": [sys.executable, "-m", "crim_hebdo", "update"],
         "WorkingDirectory": str(ROOT),
         # DILA est en Python pur : aucun PYTHONPATH n'est nécessaire puisque le
         # module est dans le dossier de travail.
-        "EnvironmentVariables": {"PYTHONUNBUFFERED": "1"},
+        "EnvironmentVariables": environment,
         "StartCalendarInterval": {"Weekday": 1, "Hour": hour, "Minute": minute},
         "RunAtLoad": False,
         "StandardOutPath": str(logs / "veille.log"),

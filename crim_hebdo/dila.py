@@ -18,11 +18,15 @@ rapports sont identiques quelle que soit la source.
 from __future__ import annotations
 
 import re
+import os
 import shutil
+import subprocess
+import sys
 import tarfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import date
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, Iterator
 from urllib.request import Request, urlopen
@@ -46,6 +50,19 @@ _SIZE_UNITS = {"K": 1024, "M": 1024**2, "G": 1024**3}
 
 class DilaError(RuntimeError):
     """Indisponibilité ou anomalie du flux de données ouvertes."""
+
+
+@lru_cache(maxsize=1)
+def _curl_supports_native_ca() -> bool:
+    """Détecte l'option qui demande explicitement le trousseau macOS à curl."""
+    try:
+        result = subprocess.run(
+            ["/usr/bin/curl", "--help", "all"], capture_output=True,
+            text=True, timeout=5,
+        )
+        return result.returncode == 0 and "--ca-native" in result.stdout
+    except (OSError, subprocess.SubprocessError):
+        return False
 
 
 @dataclass(frozen=True)
@@ -75,6 +92,31 @@ def _human_size(value: str | None) -> int | None:
 def _http_get(url: str, timeout: int = 60) -> bytes:
     request = Request(url, headers={"User-Agent": USER_AGENT})
     try:
+        # Apple's Python and third-party Pythons do not consistently use the
+        # same trust store as Safari/Keychain. The system curl does, and keeps
+        # normal hostname and certificate validation enabled.
+        if sys.platform == "darwin":
+            command = [
+                "/usr/bin/curl", "--fail", "--silent", "--show-error",
+                "--location", "--max-time", str(timeout),
+                "--user-agent", USER_AGENT,
+            ]
+            # Older macOS curl builds use Apple's trust store by default;
+            # newer builds can use other TLS backends, so request it explicitly.
+            if _curl_supports_native_ca():
+                command.append("--ca-native")
+            ca_bundle = os.environ.get("CRIM_HEBDO_CA_BUNDLE")
+            if ca_bundle:
+                command.extend(["--cacert", ca_bundle])
+            command.append(url)
+            try:
+                result = subprocess.run(
+                    command, capture_output=True, check=True, timeout=timeout + 5,
+                )
+            except subprocess.CalledProcessError as exc:
+                details = (exc.stderr or b"").decode("utf-8", "replace").strip()
+                raise OSError(details or str(exc)) from exc
+            return result.stdout
         with urlopen(request, timeout=timeout) as response:  # noqa: S310 - URL DILA figée
             return response.read()
     except Exception as exc:  # noqa: BLE001

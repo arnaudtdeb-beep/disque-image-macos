@@ -41,6 +41,10 @@ def build_plist(port: int = PORT_DEFAUT) -> dict:
     """Construit le plist du serveur avec les chemins réels de l'installation."""
     logs = ROOT / "data" / "logs"
     logs.mkdir(parents=True, exist_ok=True)
+    environment = {"PYTHONUNBUFFERED": "1"}
+    ca_bundle = os.environ.get("CRIM_HEBDO_CA_BUNDLE")
+    if ca_bundle:
+        environment["CRIM_HEBDO_CA_BUNDLE"] = ca_bundle
     return {
         "Label": LABEL,
         # `--no-browser` : l'agent tourne sans fenêtre ni utilisateur présent,
@@ -55,7 +59,7 @@ def build_plist(port: int = PORT_DEFAUT) -> dict:
             "--no-browser",
         ],
         "WorkingDirectory": str(ROOT),
-        "EnvironmentVariables": {"PYTHONUNBUFFERED": "1"},
+        "EnvironmentVariables": environment,
         # `RunAtLoad` : l'interface est disponible dès la première connexion,
         # sans rien demander à l'utilisateur. Pas de `KeepAlive` : un plantage
         # ne doit pas provoquer une boucle de redémarrages.
@@ -82,7 +86,12 @@ def cible() -> str:
 
 def est_charge() -> bool:
     code, listing = launchctl("list")
-    return code == 0 and LABEL in listing.splitlines()
+    # `launchctl list` prints PID, exit status, then label; labels are not
+    # whole-line matches (e.g. "-\t0\tcom.crimhebo.serve").
+    return code == 0 and any(
+        ligne.split() and ligne.split()[-1] == LABEL
+        for ligne in listing.splitlines()
+    )
 
 
 def port_repond(port: int = PORT_DEFAUT, delai: float = 0.5) -> bool:
@@ -138,14 +147,41 @@ def installer(port: int, dry_run: bool) -> int:
     # Un agent déjà chargé doit être déchargé avant d'être remplacé.
     if PLIST_PATH.exists() or est_charge():
         launchctl("bootout", cible())
+        if est_charge():
+            print(
+                f"l'ancien agent {LABEL} est toujours chargé ; impossible de le remplacer.",
+                file=sys.stderr,
+            )
+            print(f"État launchd : {launchctl('print', cible())[1]}", file=sys.stderr)
+            return 1
 
     PLIST_PATH.parent.mkdir(parents=True, exist_ok=True)
     PLIST_PATH.write_bytes(plistlib.dumps(data, sort_keys=True))
     print(f"plist écrit : {PLIST_PATH}")
 
+    # Catch the common launchd EIO case (a missing/non-executable interpreter
+    # or working directory) before asking launchd to load the job.
+    executable = Path(sys.executable)
+    if not executable.is_file() or not os.access(executable, os.X_OK):
+        print(f"Python configuré dans le plist est introuvable ou inexécutable : {executable}", file=sys.stderr)
+        return 1
+    if not ROOT.is_dir():
+        print(f"dossier du programme introuvable : {ROOT}", file=sys.stderr)
+        return 1
+
     code, message = launchctl("bootstrap", f"gui/{os.getuid()}", str(PLIST_PATH))
     if code:
         print(f"chargement impossible : {message}", file=sys.stderr)
+        print(f"Python : {sys.executable}", file=sys.stderr)
+        print(f"Dossier : {ROOT}", file=sys.stderr)
+        print(f"Plist : {PLIST_PATH}", file=sys.stderr)
+        if PLIST_PATH.exists():
+            print(f"Plist lisible : {os.access(PLIST_PATH, os.R_OK)}", file=sys.stderr)
+        print(f"Journal serveur : {ROOT / 'data' / 'logs' / 'serve.err.log'}", file=sys.stderr)
+        _code, diagnostic = launchctl("print", cible())
+        if diagnostic:
+            print(f"État launchd : {diagnostic}", file=sys.stderr)
+        print(f"Vérifiez aussi le journal launchd : {ROOT / 'data' / 'logs' / 'serve.err.log'}", file=sys.stderr)
         return 1
 
     if attendre(port):

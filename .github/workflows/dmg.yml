@@ -21,6 +21,12 @@ jobs:
   dmg:
     # HFS+ reste lisible par toutes les versions de macOS, y compris anciennes.
     runs-on: macos-14
+    env:
+      DEVELOPER_CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_CERTIFICATE_BASE64 }}
+      DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_CERTIFICATE_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,6 +51,50 @@ jobs:
           else
             python3 tools/build_dmg.py
           fi
+
+      - name: Signer et notarier l'image (si les identifiants sont configurés)
+        id: notarize
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$DEVELOPER_CERTIFICATE_BASE64" ]]; then
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+              echo "Un certificat Developer ID est requis pour publier une version." >&2
+              exit 1
+            fi
+            echo "Secrets Apple absents : image non signée (artefact de développement uniquement)."
+            exit 0
+          fi
+          for name in DEVELOPER_CERTIFICATE_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_SPECIFIC_PASSWORD; do
+            if [[ -z "${!name}" ]]; then
+              echo "Secret requis manquant : $name" >&2
+              exit 1
+            fi
+          done
+
+          KEYCHAIN="$RUNNER_TEMP/crim-hebdo-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 24)"
+          CERTIFICATE="$RUNNER_TEMP/developer-id.p12"
+          echo "$DEVELOPER_CERTIFICATE_BASE64" | base64 -D > "$CERTIFICATE"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERTIFICATE" -k "$KEYCHAIN" -P "$DEVELOPER_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" | awk -F '"' '/Developer ID Application:/ { print $2; exit }')"
+          if [[ -z "$IDENTITY" ]]; then
+            echo "Aucune identité Developer ID Application valide dans le certificat." >&2
+            exit 1
+          fi
+
+          DMG=(dist/*.dmg)
+          codesign --force --sign "$IDENTITY" --timestamp --identifier "fr.crimhebo.distribution" "${DMG[0]}"
+          codesign --verify --verbose=2 "${DMG[0]}"
+          xcrun notarytool submit "${DMG[0]}" --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_SPECIFIC_PASSWORD" --wait
+          xcrun stapler staple "${DMG[0]}"
+          xcrun stapler validate "${DMG[0]}"
+          echo "signed=true" >> "$GITHUB_OUTPUT"
 
       - name: Contrôler le fichier produit
         run: |

@@ -97,7 +97,11 @@ if [ ! -f "$RACINE/.premier_lancement" ]; then
   titre "3. Préparation (une seule fois)"
   alerte "Le premier téléchargement des arrêts peut prendre quelques minutes."
   info "Laissez cette fenêtre ouverte jusqu'au message « c'est prêt »."
-  (cd "$RACINE" && "$PYTHON" tools/install.py --yes --port "$PORT")
+  if ! (cd "$RACINE" && "$PYTHON" tools/install.py --yes --port "$PORT"); then
+    echec "La préparation a échoué ; le premier lancement sera retenté la prochaine fois."
+    attente
+    exit 1
+  fi
   touch "$RACINE/.premier_lancement"
 fi
 

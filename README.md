@@ -428,9 +428,18 @@ qui écrase la précédente, `textContent` sur un élément absent). Ils demande
 
 Pour un poste macOS destiné à une personne qui n'ouvre pas de Terminal,
 `packaging/macos` fournit une **image disque `.dmg`** : un double-clic, et
-l'interface s'ouvre. Rien n'y est compilé ni signé — ce sont des scripts et du
-Python — donc macOS ne peut pas refuser l'ouverture, contrairement à une
-application non signée.
+l'interface s'ouvre. Les images construites localement ne sont pas signées. Pour
+que Gatekeeper ne demande pas d'autorisation manuelle aux personnes qui
+téléchargent une version publiée, le workflow GitHub signe l'image avec un
+certificat Apple Developer ID puis la fait notarier par Apple.
+
+La publication signée nécessite un compte Apple Developer et les secrets GitHub
+`DEVELOPER_CERTIFICATE_BASE64`, `DEVELOPER_CERTIFICATE_PASSWORD`, `APPLE_ID`,
+`APPLE_TEAM_ID` et `APPLE_APP_SPECIFIC_PASSWORD`. Sans ces secrets, les builds
+manuels restent des images de développement non signées ; la publication d'un
+tag `v*` échoue volontairement au lieu de publier une image que macOS bloquera.
+Les images déjà téléchargées ne changent pas : il faut récupérer une nouvelle
+version publiée après configuration.
 
 ### Télécharger l'image
 
@@ -523,6 +532,46 @@ python3 tools/serve_launchd.py status       # état, lisible
 python3 tools/serve_launchd.py stop         # arrête
 python3 tools/serve_launchd.py uninstall    # supprime l'agent
 ```
+
+### Dépannage macOS : lancement et certificat DILA
+
+Si `launchctl bootstrap` affiche `Bootstrap failed: 5`, le lanceur affiche
+maintenant les chemins de Python, du projet, du plist et du journal d'erreur.
+Vérifiez que le dossier `~/crim-hebdo` existe toujours et que Python peut être
+ouvert dans **Réglages Système → Confidentialité et sécurité**. Pour obtenir
+l'état détaillé de launchd, exécutez dans Terminal :
+
+```bash
+launchctl print gui/$(id -u)/com.crimhebo.serve
+tail -50 ~/crim-hebdo/data/logs/serve.err.log
+```
+
+Si le démarrage échoue parce qu'un ancien agent est resté chargé, réinstallez
+le plist depuis le Terminal :
+
+```bash
+cd ~/crim-hebdo
+python3 tools/serve_launchd.py uninstall
+python3 tools/serve_launchd.py install
+```
+
+Si l'accès DILA indique `CERTIFICATE_VERIFY_FAILED`, l'application conserve la
+validation TLS. Sur macOS, les requêtes passent par le `curl` du système pour
+utiliser les certificats approuvés dans le trousseau macOS. Si un proxy
+intercepte HTTPS, faites vérifier son certificat racine par votre service
+informatique et faites-le approuver dans Trousseaux d'accès. Si nécessaire,
+vous pouvez aussi fournir son fichier PEM explicitement, puis vérifier l'accès
+et réinstaller les agents depuis le même Terminal :
+
+```bash
+export CRIM_HEBDO_CA_BUNDLE="$HOME/chemin/vers/autorite-approuvee.pem"
+cd ~/crim-hebdo
+python3 -m crim_hebdo check
+python3 tools/serve_launchd.py install
+```
+
+Cette variable est enregistrée dans l'agent launchd pour les mises à jour
+ultérieures. N'utilisez pas un certificat reçu d'une source non vérifiée.
 
 ---
 
