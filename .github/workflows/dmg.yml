@@ -20,7 +20,8 @@ permissions:
 jobs:
   dmg:
     # HFS+ reste lisible par toutes les versions de macOS, y compris anciennes.
-    runs-on: macos-14
+    # macos-14 est en cours de retrait par GitHub ; macos-15 reste compatible.
+    runs-on: macos-15
     env:
       DEVELOPER_CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_CERTIFICATE_BASE64 }}
       DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_CERTIFICATE_PASSWORD }}
