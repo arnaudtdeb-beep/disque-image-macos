@@ -68,7 +68,9 @@ jobs:
           if [[ -f "$RUNNER_TEMP/config.json" ]]; then
             ARGS+=(--config-json "$RUNNER_TEMP/config.json")
           fi
-          python3 tools/build_dmg.py "${ARGS[@]}"
+          # ${ARGS[@]+...} : un tableau vide lève « unbound variable » avec
+          # `set -u` sur l'ancien bash (macOS). Cette forme tolère le vide.
+          python3 tools/build_dmg.py ${ARGS[@]+"${ARGS[@]}"}
 
       - name: Signer et notarier l'image (si les identifiants sont configurés)
         id: notarize
@@ -77,11 +79,15 @@ jobs:
           set -euo pipefail
           if [[ -z "$DEVELOPER_CERTIFICATE_BASE64" ]]; then
             echo "signed=false" >> "$GITHUB_OUTPUT"
+            # Pas de certificat Apple : on produit quand même l'image, non
+            # signée. macOS demandera une autorisation manuelle au premier
+            # lancement (ouvrir quand même). On n'échoue plus sur un tag, pour
+            # ne pas bloquer la publication d'une image utilisable.
             if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-              echo "Un certificat Developer ID est requis pour publier une version." >&2
-              exit 1
+              echo "::warning::Image non signée (aucun certificat Developer ID configuré) : Gatekeeper demandera une autorisation manuelle."
+            else
+              echo "Secrets Apple absents : image non signée (artefact de développement uniquement)."
             fi
-            echo "Secrets Apple absents : image non signée (artefact de développement uniquement)."
             exit 0
           fi
           for name in DEVELOPER_CERTIFICATE_PASSWORD APPLE_ID APPLE_TEAM_ID APPLE_APP_SPECIFIC_PASSWORD; do
