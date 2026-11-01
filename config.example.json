@@ -17,6 +17,9 @@
   "_cache": "Dossier des archives DILA telechargees. Videz-le si vous voulez forcer un retelechargement complet.",
   "cache_dir": "data/cache",
 
+  "_dump_annuel": "true = telecharger aussi le dump annuel DILA (archives anciennes, ~250 Mo, une fois). Au premier lancement il est recupere d'office; ensuite cette valeur fait foi. Variable: CRIM_HEBDO_ANNUAL_DUMP.",
+  "include_annual_dump": false,
+
   "_llm": "provider = none | openai | anthropic | ollama. 'none' = extraits verbatim, aucune donnee envoyee a un tiers.",
   "use_llm": true,
   "llm": {

@@ -57,6 +57,9 @@ class Config:
     # "piste" : API Judilibre, qui exige un couple client_id / client_secret.
     source: str = "dila"
     dila_base_url: str = "https://echanges.dila.gouv.fr/OPENDATA/CASS/"
+    # Télécharger aussi le dump annuel global (historique ancien). Au premier
+    # lancement il est récupéré d'office ; ensuite cette option fait foi.
+    include_annual_dump: bool = False
     cache_dir: Path = PROJECT_ROOT / "data" / "cache"
     judilibre_base_path: str = "/cassation/judilibre/v1.0"
     use_sandbox: bool = False
@@ -117,6 +120,7 @@ def _from_env(env: dict[str, str]) -> dict[str, Any]:
         "use_sandbox": env.get("CRIM_HEBDO_SANDBOX", "").lower() in {"1", "true", "yes"},
         "enrich_legifrance": env.get("CRIM_HEBDO_LEGIFRANCE", "").lower() in {"1", "true", "yes"},
         "only_bulletin": env.get("CRIM_HEBDO_ONLY_BULLETIN", "").lower() in {"1", "true", "yes"},
+        "include_annual_dump": env.get("CRIM_HEBDO_ANNUAL_DUMP", "").lower() in {"1", "true", "yes"},
         "chambers": [c for c in env.get("CRIM_HEBDO_CHAMBERS", "").split(",") if c.strip()],
         "llm": llm,
     }

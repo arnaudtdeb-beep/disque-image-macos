@@ -86,6 +86,7 @@ def run_update(
     log: Logger = _print,
     force: bool = False,
     source: str | None = None,
+    include_annual: bool | None = None,
 ) -> RunResult:
     """Actualise la base et produit le rapport de la période.
 
@@ -93,14 +94,29 @@ def run_update(
     Sans argument, la période est la semaine écoulée (source PISTE) ou
     l'ensemble des fichiers d'appoint non encore traités (source DILA, qui
     publie par lot hebdomadaire et non par date de décision).
+
+    `include_annual` (source DILA) commande le téléchargement du dump annuel
+    global, qui apporte l'historique ancien. Par défaut : vrai au premier
+    lancement (base vide) et sur demande explicite ; sinon le paramètre de
+    configuration `include_annual_dump` fait foi.
     """
     source = (source or config.source or "dila").strip().lower()
     own_store = store is None
     store = store or Store(config.data_dir)
 
+    # Décision par défaut sur le dump annuel : au premier lancement (aucune
+    # décision en base) on récupère l'historique ; ensuite on s'en remet à la
+    # configuration pour ne pas retélécharger 250 Mo à chaque passage.
+    if include_annual is None:
+        include_annual = config.include_annual_dump or store.is_empty()
+
     try:
         if source == "dila":
-            return _run_dila(config, store, log, force=force, date_start=date_start, date_end=date_end)
+            return _run_dila(
+                config, store, log, force=force,
+                date_start=date_start, date_end=date_end,
+                include_annual=include_annual,
+            )
         if source == "piste":
             return _run_piste(
                 config, store, log, force=force, date_start=date_start, date_end=date_end
@@ -248,11 +264,17 @@ def _run_dila(
     force: bool,
     date_start: str | None = None,
     date_end: str | None = None,
+    include_annual: bool = False,
 ) -> RunResult:
     """Actualisation via les fichiers d'appoint DILA (source par défaut)."""
     log("Lecture de l'index des données ouvertes DILA…")
-    releases = dila_source.list_releases()
-    log(f"{len(releases)} fichier(s) d'appoint disponible(s).")
+    releases = dila_source.discover(include_annual=include_annual)
+    hebdo = sum(1 for r in releases if not r.is_annual)
+    annuels = sum(1 for r in releases if r.is_annual)
+    if include_annual:
+        log(f"{hebdo} fichier(s) hebdomadaire(s) et {annuels} dump(s) annuel(s) disponible(s).")
+    else:
+        log(f"{hebdo} fichier(s) d'appoint disponible(s).")
 
     deja_traites = set(store.processed_releases())
     if force:
@@ -269,7 +291,11 @@ def _run_dila(
     # version rejouable au prochain lancement.
     versions: list[tuple[Any, int]] = []
     for release in a_traiter:
-        log(f"Fichier {release.name} (déposé le {release.date})")
+        if release.is_annual:
+            poids = f", {release.size_bytes // (1024 * 1024)} Mo" if release.size_bytes else ""
+            log(f"Dump annuel {release.name}{poids} — l'historique ancien, cela peut durer.")
+        else:
+            log(f"Fichier {release.name} (déposé le {release.date})")
         root = dila_source.download(release, config.cache_dir, log=log)
         trouves = dila_source.parse_release(root, release)
         if date_start or date_end:

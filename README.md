@@ -214,6 +214,8 @@ python3 -m crim_hebdo update --debut 2026-09-01 --fin 2026-09-30
 python3 -m crim_hebdo update --only-bulletin      # uniquement les arrêts B
 python3 -m crim_hebdo update --sans-llm           # pas de synthèse assistée
 python3 -m crim_hebdo update --force              # réanalyse tout
+python3 -m crim_hebdo update --historique         # + dump annuel DILA (archives anciennes, ~250 Mo)
+python3 -m crim_hebdo update --no-historique      # hebdomadaires seulement
 
 python3 -m crim_hebdo list --debut 2026-09-01 --fin 2026-09-30
 python3 -m crim_hebdo show 25-91.204
@@ -234,6 +236,24 @@ sources alimentent la même base et peuvent être alternées.
 
 Le cache DILA (`data/cache/`) conserve les archives téléchargées : une seconde
 exécution ne retélécharge rien. Le supprimer force un téléchargement complet.
+
+### Archives anciennes (dump annuel)
+
+Le flux hebdomadaire ne remonte qu'à environ 14 mois : les versions plus
+anciennes ne sont plus exposées par l'index. La DILA publie en revanche un
+**dump annuel global** (`Freemium_cass_global_<date>.tar.gz`, ~250 Mo) qui
+contient tout l'historique conservé de la chambre criminelle. L'outil le
+télécharge automatiquement :
+
+- **au premier lancement** (base vide) : l'historique ancien est récupéré une
+  fois, puis complété par les fichiers hebdomadaires ;
+- sur demande explicite avec `update --historique` ;
+- jamais si vous passez `update --no-historique`, ou si vous réglez
+  `include_annual_dump` sur `false` (variable `CRIM_HEBDO_ANNUAL_DUMP=0`).
+
+Le dump n'est récupéré qu'une seule fois : son nom est enregistré comme déjà
+traité, comme celui d'une semaine. Le supprimer du cache force un nouveau
+téléchargement.
 
 Les rapports sont écrits dans `data/rapports/` :
 
@@ -411,10 +431,13 @@ qui écrase la précédente, `textContent` sur un élément absent). Ils demande
 - **L'enrichissement Légifrance** (numéro de bulletin) exige un abonnement
   séparé sur PISTE ; sans lui, le repère « publié au bulletin » reste disponible,
   car la source DILA porte déjà cette information.
-- **Historique limité.** Le flux DILA ne sert que les versions hebdomadaires
-  encore conservées : environ 14 mois au jour de la rédaction. La DILA publie par
-  ailleurs un dump annuel (`Freemium_cass_global_<date>.tar.gz`, environ
-  250 Mo) permettant un rattrapage, non encore automatisé ici.
+- **Historique ancien via le dump annuel.** Le flux hebdomadaire DILA ne sert
+  que les versions encore conservées (environ 14 mois au jour de la rédaction).
+  Les archives plus anciennes sont obtenues par le **dump annuel global**
+  (`Freemium_cass_global_<date>.tar.gz`, ~250 Mo), désormais téléchargé
+  automatiquement au premier lancement (ou avec `update --historique`). Il
+  couvre l'historique conservé par la DILA, mais pas au-delà de ce qu'elle
+  publie : les décisions antérieures restent hors de portée de ce flux.
 - **Tous les arrêts importés en source DILA sont publiés au bulletin**, par
   construction : c'est le contenu des weekly releases. Pour suivre les arrêts non
   publiés, il faut Judilibre (`--source piste`).

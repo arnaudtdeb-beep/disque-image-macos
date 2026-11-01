@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from .config import PROJECT_ROOT, load_config, save_template
-from .dila import DilaError, list_releases
+from .dila import DilaError, list_annual_dumps, list_releases
 from .piste import MissingCredentials, PisteError
 from .report import write_reports
 from .store import Store
@@ -66,6 +66,14 @@ def cmd_update(args: argparse.Namespace) -> int:
         date_start, date_end = _period(args)
         _print_period(date_start, date_end)
 
+    # Dump annuel : --historique force son téléchargement, --no-historique le
+    # désactive. Sans option, run_update décide (historique au premier lancement).
+    include_annual: bool | None = None
+    if getattr(args, "historique", False):
+        include_annual = True
+    elif getattr(args, "no_historique", False):
+        include_annual = False
+
     store = Store(config.data_dir)
     try:
         result = run_update(
@@ -75,6 +83,7 @@ def cmd_update(args: argparse.Namespace) -> int:
             store=store,
             force=args.force,
             source=config.source,
+            include_annual=include_annual,
         )
     except MissingCredentials as exc:
         print(f"\nConfiguration manquante.\n{exc}\n", file=sys.stderr)
@@ -251,10 +260,23 @@ def cmd_check(args: argparse.Namespace) -> int:
         store.close()
         try:
             releases = list_releases()
+            annuels = list_annual_dumps()
         except DilaError as exc:
             print(f"  ✗ index des données ouvertes injoignable : {exc}")
             return 3
         print(f"  ✓ {len(releases)} fichier(s) d'appoint publié(s) par la DILA.")
+        if annuels:
+            dernier = annuels[0]
+            poids = f", {dernier.size_bytes // (1024 * 1024)} Mo" if dernier.size_bytes else ""
+            traite = dernier.name in deja
+            etat = "déjà téléchargé" if traite else "non téléchargé"
+            print(
+                f"  ✓ dump annuel disponible : {dernier.name} "
+                f"(déposé le {dernier.date}{poids}, {etat})"
+            )
+            print("    → `update --historique` télécharge l'historique ancien (~250 Mo, une fois).")
+        else:
+            print("  · aucun dump annuel publié sur cet index (hebdomadaires seulement).")
         if deja:
             print(f"  {len(deja)} déjà traité(s) · {len(releases) - len(deja)} à venir")
         else:
@@ -307,6 +329,16 @@ def build_parser() -> argparse.ArgumentParser:
     p_update.add_argument("--only-bulletin", action="store_true", help="ne récupérer que les arrêts B")
     p_update.add_argument("--sans-llm", action="store_true", help="désactiver la synthèse assistée")
     p_update.add_argument("--legifrance", action="store_true", help="activer l'enrichissement Légifrance")
+    p_update.add_argument(
+        "--historique",
+        action="store_true",
+        help="télécharger le dump annuel DILA (historique ancien, ~250 Mo, une seule fois)",
+    )
+    p_update.add_argument(
+        "--no-historique",
+        action="store_true",
+        help="ne pas télécharger le dump annuel (hebdomadaires seulement)",
+    )
     p_update.set_defaults(func=cmd_update)
 
     p_serve = sub.add_parser("serve", help="ouvrir l'interface web locale")

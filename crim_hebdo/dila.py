@@ -5,10 +5,22 @@ un fichier d'appoint contenant les décisions nouvellement ouvertes au public.
 
     https://echanges.dila.gouv.fr/OPENDATA/CASS/CASS_AAAAMMJJ-HHMMSS.tar.gz
 
-Un tel fichier contient des XML `TEXTE_JURI_JUDI` (le même format que les
-données de Légifrance) : métadonnées complètes, sommaire officiel de la Cour,
-visa, et **texte intégral de l'arrêt**. C'est la solution de repli quand l'API
-Judilibre via PISTE n'est pas accessible.
+En plus de ces fichiers hebdomadaires, la DILA dépose sur le même index un
+**dump annuel global** (« données essentielles ») qui contient l'historique
+conservé de la chambre criminelle :
+
+    https://echanges.dila.gouv.fr/OPENDATA/CASS/Freemium_cass_global_AAAAMMJJ-HHMMSS.tar.gz
+
+Ce second fichier comble la limite des fichiers hebdomadaires (environ 14 mois
+d'historique seulement) : il fournit les archives anciennes que le flux
+hebdomadaire n'expose plus. Il est volumineux (plusieurs centaines de Mo) et
+n'est récupéré qu'une fois — au premier lancement ou sur demande explicite
+(`update --historique`).
+
+Qu'il soit hebdomadaire ou annuel, un fichier d'appoint contient des XML
+`TEXTE_JURI_JUDI` (le même format que les données de Légifrance) : métadonnées
+complètes, sommaire officiel de la Cour, visa, et **texte intégral de l'arrêt**.
+C'est la solution de repli quand l'API Judilibre via PISTE n'est pas accessible.
 
 Ce module produit exactement les mêmes structures que `judilibre.py`
 (`short` + `full`), de sorte que l'analyse, le classement thématique et les
@@ -40,12 +52,22 @@ USER_AGENT = "crim-hebdo/1.0 (+veille chambre criminelle, open data DILA)"
 # Dossier du fichier d'appoint correspondant à la chambre criminelle.
 CASS_CRIM = "criminelle"
 
+# Préfixe des archives annuelles (dump global de l'historique) de la DILA.
+ANNUAL_PREFIX = "Freemium_cass_global_"
+
 _RELEASE_NAME = re.compile(r'href="(CASS_(\d{8})-(\d{6})\.tar\.gz)"[^>]*>([^<]+)</a>')
 _RELEASE_ROW = re.compile(
     r'href="(CASS_(\d{8})-(\d{6})\.tar\.gz)"[^>]*>[^<]*</a>\s*'
-    r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})?\s*([0-9.]+[KMG]?)?'
+    r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})?\s*([0-9.]+[KMGT]?)?'
 )
-_SIZE_UNITS = {"K": 1024, "M": 1024**2, "G": 1024**3}
+# L'index Apache encode parfois les noms (Freemium%5F…) ; on décode le lien
+# avant de comparer au préfixe des archives annuelles.
+_GLOBAL_ROW = re.compile(
+    r'href="([^"]*Freemium[^"]*\.tar\.gz)"[^>]*>[^<]*</a>\s*'
+    r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})?\s*([0-9.]+[KMGT]?)?'
+)
+_NAME_STAMP = re.compile(r"(\d{8})-(\d{6})")
+_SIZE_UNITS = {"K": 1024, "M": 1024**2, "G": 1024**3, "T": 1024**4}
 
 
 class DilaError(RuntimeError):
@@ -67,22 +89,27 @@ def _curl_supports_native_ca() -> bool:
 
 @dataclass(frozen=True)
 class Release:
-    """Un fichier d'appoint hebdomadaire."""
+    """Un fichier d'appoint : hebdomadaire (« week ») ou annuel (« annual »)."""
 
     name: str
     url: str
     published: str  # date de dépôt, ISO
     size_bytes: int | None = None
+    kind: str = "week"  # « week » (CASS_…) ou « annual » (Freemium_cass_global_…)
 
     @property
     def date(self) -> str:
         return self.published[:10]
 
+    @property
+    def is_annual(self) -> bool:
+        return self.kind == "annual"
+
 
 def _human_size(value: str | None) -> int | None:
     if not value:
         return None
-    match = re.fullmatch(r"([0-9.]+)([KMG]?)", value.strip())
+    match = re.fullmatch(r"([0-9.]+)([KMGT]?)", value.strip())
     if not match:
         return None
     number = float(match.group(1))
@@ -147,6 +174,58 @@ def latest_releases(limit: int = 1, timeout: int = 60) -> list[Release]:
     return list_releases(timeout=timeout)[:limit]
 
 
+def list_annual_dumps(timeout: int = 60) -> list[Release]:
+    """Dumps annuels globaux publiés par la DILA, du plus récent au plus ancien.
+
+    Ces archives contiennent l'historique conservé de la chambre criminelle.
+    Leur poids est élevé (plusieurs centaines de Mo) : l'appelant décide de les
+    télécharger ou non.
+    """
+    from urllib.parse import unquote
+
+    body = _http_get(BASE_URL, timeout=timeout).decode("utf-8", "replace")
+    dumps: dict[str, Release] = {}
+    for raw_name, published, size in _GLOBAL_ROW.findall(body):
+        name = unquote(raw_name)
+        base = name.rsplit("/", 1)[-1]
+        if not base.startswith(ANNUAL_PREFIX):
+            continue
+        stamp = _NAME_STAMP.search(base)
+        day = (
+            f"{stamp.group(1)[:4]}-{stamp.group(1)[4:6]}-{stamp.group(1)[6:8]}"
+            if stamp
+            else ""
+        )
+        dumps[base] = Release(
+            name=base,
+            url=BASE_URL + raw_name,
+            published=(published[:10] or day),
+            size_bytes=_human_size(size),
+            kind="annual",
+        )
+    return sorted(dumps.values(), key=lambda r: (r.date, r.name), reverse=True)
+
+
+def discover(include_annual: bool = True, timeout: int = 60) -> list[Release]:
+    """Fichiers d'appoint à considérer : hebdomadaires, et éventuellement annuels.
+
+    Les archives annuelles sont placées **en tête** : téléchargées d'abord, elles
+    livrent l'historique ancien, puis les fichiers hebdomadaires complètent les
+    semaines récentes et servent de dédoublonnage naturel (l'analyse ignore les
+    arrêts déjà connus).
+    """
+    releases = list_releases(timeout=timeout)
+    if not include_annual:
+        return releases
+    try:
+        annual = list_annual_dumps(timeout=timeout)
+    except DilaError:
+        # Un index sans dump annuel ne doit jamais empêcher la veille
+        # hebdomadaire de fonctionner.
+        annual = []
+    return annual + releases
+
+
 def release_url(name: str) -> str:
     return BASE_URL + name
 
@@ -200,11 +279,22 @@ def _safe_extract(tar: tarfile.TarFile, target: Path) -> None:
 
 
 def iter_decision_files(root: str | Path) -> Iterator[Path]:
-    """Fichiers XML de la chambre criminelle d'un fichier d'appoint."""
+    """Fichiers XML de la chambre criminelle d'un fichier d'appoint.
+
+    Les fichiers hebdomadaires rangent leurs décisions sous un dossier
+    « criminelle ». Le dump annuel global réunit toutes les chambres : on y
+    sélectionne les XML dont le chemin contient « criminelle » ; à défaut
+    (arborescence aplatie), tous les XML sont proposés et le parseur écarte
+    ceux qui ne sont pas des arrêts criminels.
+    """
     root = Path(root)
     if not root.is_dir():
         return
-    yield from sorted(p for p in root.rglob("*.xml") if CASS_CRIM in p.parts)
+    crim = [p for p in root.rglob("*.xml") if CASS_CRIM in p.parts]
+    if crim:
+        yield from sorted(crim)
+        return
+    yield from sorted(root.rglob("*.xml"))
 
 
 # ------------------------------------------------------------------ parsing

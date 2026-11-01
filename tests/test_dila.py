@@ -263,5 +263,114 @@ class TestRelease(unittest.TestCase):
         self.assertEqual(RELEASE.date, "2026-09-30")
 
 
+class TestDumpAnnuel(unittest.TestCase):
+    """Découverte et nature des fichiers : hebdomadaires et dump annuel."""
+
+    # Extrait fidèle de l'index Apache de la DILA : liens encodés et brut.
+    INDEX = (
+        '<a href="CASS%5F20250707-210159.tar.gz">CASS_20250707-210159.tar.gz</a>'
+        "  2025-07-07 21:07  281K\n"
+        '<a href="CASS%5F20260930-215413.tar.gz">CASS_20260930-215413.tar.gz</a>'
+        "  2026-09-30 21:59  350K\n"
+        '<a href="Freemium%5Fcass%5Fglobal%5F20250713-140000.tar.gz">'
+        "Freemium_cass_global_20250713-140000.tar.gz</a>  2025-07-13 09:17  248M\n"
+    )
+
+    def _annual_from_index(self):
+        from urllib.parse import unquote
+
+        from crim_hebdo.dila import (
+            ANNUAL_PREFIX,
+            _GLOBAL_ROW,
+            _human_size,
+            _NAME_STAMP,
+        )
+
+        found = []
+        for raw_name, published, size in _GLOBAL_ROW.findall(self.INDEX):
+            base = unquote(raw_name).rsplit("/", 1)[-1]
+            if not base.startswith(ANNUAL_PREFIX):
+                continue
+            stamp = _NAME_STAMP.search(base)
+            day = (
+                f"{stamp.group(1)[:4]}-{stamp.group(1)[4:6]}-{stamp.group(1)[6:8]}"
+                if stamp
+                else ""
+            )
+            found.append(
+                Release(
+                    name=base,
+                    url="https://exemple/" + raw_name,
+                    published=published[:10] or day,
+                    size_bytes=_human_size(size),
+                    kind="annual",
+                )
+            )
+        return found
+
+    def test_le_dump_annuel_est_reconnu(self):
+        annuels = self._annual_from_index()
+        self.assertEqual(len(annuels), 1)
+        dump = annuels[0]
+        self.assertEqual(dump.name, "Freemium_cass_global_20250713-140000.tar.gz")
+        self.assertEqual(dump.date, "2025-07-13")
+        self.assertTrue(dump.is_annual)
+        self.assertEqual(dump.size_bytes, 248 * 1024 * 1024)
+
+    def test_les_hebdomadaires_ne_sont_pas_annuels(self):
+        self.assertFalse(RELEASE.is_annual)
+        self.assertEqual(RELEASE.kind, "week")
+
+    def test_human_size_gere_le_dump_annuel(self):
+        from crim_hebdo.dila import _human_size
+
+        self.assertEqual(_human_size("248M"), 248 * 1024 * 1024)
+        self.assertEqual(_human_size("1G"), 1024 ** 3)
+        self.assertEqual(_human_size("350K"), 350 * 1024)
+
+    def test_discover_met_le_dump_en_tete(self):
+        from unittest import mock
+
+        import crim_hebdo.dila as dila
+
+        annual = Release(
+            "Freemium_cass_global_20250713-140000.tar.gz",
+            "https://exemple/global.tar.gz",
+            "2025-07-13",
+            248 * 1024 * 1024,
+            kind="annual",
+        )
+        hebdo = [RELEASE]
+        with mock.patch.object(dila, "list_releases", return_value=hebdo), \
+                mock.patch.object(dila, "list_annual_dumps", return_value=[annual]):
+            releases = dila.discover(include_annual=True)
+        self.assertEqual(releases[0], annual)
+        self.assertIn(RELEASE, releases)
+
+    def test_discover_sans_dump_par_defaut_si_desactive(self):
+        from unittest import mock
+
+        import crim_hebdo.dila as dila
+
+        with mock.patch.object(dila, "list_releases", return_value=[RELEASE]), \
+                mock.patch.object(dila, "list_annual_dumps") as mb:
+            releases = dila.discover(include_annual=False)
+        mb.assert_not_called()
+        self.assertEqual(releases, [RELEASE])
+
+    def test_discover_tolere_un_index_sans_dump(self):
+        from unittest import mock
+
+        import crim_hebdo.dila as dila
+
+        with mock.patch.object(dila, "list_releases", return_value=[RELEASE]), \
+                mock.patch.object(
+                    dila, "list_annual_dumps",
+                    side_effect=dila.DilaError("pas de dump"),
+                ):
+            releases = dila.discover(include_annual=True)
+        self.assertEqual(releases, [RELEASE])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
