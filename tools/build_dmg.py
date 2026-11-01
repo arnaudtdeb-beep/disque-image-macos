@@ -107,7 +107,7 @@ def empreinte(dossier: Path) -> str:
     return hache.hexdigest()[:16]
 
 
-def stage(dest: Path, version: str) -> Path:
+def stage(dest: Path, version: str, config_json: Path | None = None) -> Path:
     """Assemble le contenu de l'image dans `dest` et renvoie sa racine."""
     racine = dest.resolve()
     # `rmtree` est exécuté ci-dessous : on refuse un dossier qui contient le
@@ -129,6 +129,13 @@ def stage(dest: Path, version: str) -> Path:
     for nom in (LAUNCH, STOP):
         chemin = racine / nom
         chemin.chmod(chemin.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+    # config.json embarrassé (clés PISTE, source piste) : présent uniquement si
+    # la construction l'a reçu. Il est copié SOUS un autre nom dans l'image
+    # (config.json.bundle) pour ne pas être repris tel quel par la source
+    # locale du dépôt ; le lanceur le pose dans ~/crim-hebdo au 1er lancement.
+    if config_json is not None and config_json.is_file():
+        shutil.copy2(config_json, racine / PAYLOAD / "config.json.bundle")
 
     # VERSION porte la version et l'empreinte : le lanceur compare les deux
     # fichiers avec `cmp` pour savoir s'il doit réinstaller.
@@ -243,11 +250,30 @@ def main() -> int:
     parser.add_argument("--version", default=None, help="version inscrite dans VERSION")
     parser.add_argument("-o", "--sortie", default="dist", help="dossier de sortie (défaut dist)")
     parser.add_argument("--stage-only", action="store_true", help="assembler sans créer le .dmg")
+    parser.add_argument(
+        "--config-json",
+        default=None,
+        help="config.json à embarquer (clés PISTE, source piste). "
+        "Par défaut : ./config.json s'il existe, sinon rien (l'app utilisera DILA).",
+    )
     parser.add_argument("--stage", default=None, help="dossier d'assemblage (défaut <sortie>/stage)")
     args = parser.parse_args()
 
     version = args.version or version_par_defaut()
-    racine = stage(Path(args.stage or Path(args.sortie) / "stage"), version)
+    if args.config_json:
+        config_json = Path(args.config_json)
+        if not config_json.is_file():
+            print(f"config.json introuvable : {config_json}", file=sys.stderr)
+            return 2
+    else:
+        defaut = ROOT / "config.json"
+        config_json = defaut if defaut.is_file() else None
+    if config_json is not None:
+        print(f"config embarqué : {config_json} (source piste attendue)")
+    else:
+        print("aucun config.json embarqué : l'app utilisera la source DILA (sans clé)")
+
+    racine = stage(Path(args.stage or Path(args.sortie) / "stage"), version, config_json)
 
     taille = sum(p.stat().st_size for p in racine.rglob("*") if p.is_file())
     print(f"assemblage : {racine}")

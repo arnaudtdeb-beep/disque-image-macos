@@ -86,6 +86,31 @@ def last_week(today: date | None = None) -> tuple[str, str]:
     return start.isoformat(), end.isoformat()
 
 
+def month_ranges(date_start: str, date_end: str) -> list[tuple[str, str]]:
+    """Découpe [date_start, date_end] en intervalles d'un mois civil.
+
+    Le dernier intervalle est tronqué à date_end. Utile pour la source PISTE :
+    une période longue dépasse la pagination d'un seul appel /search
+    (max_pages × page_size), un découpage mensuel reste sous la limite.
+    """
+    start = date.fromisoformat(date_start)
+    end = date.fromisoformat(date_end)
+    if end < start:
+        raise ValueError("--fin doit être postérieure ou égale à --debut")
+    ranges: list[tuple[str, str]] = []
+    cursor = start
+    while cursor <= end:
+        # premier jour du mois suivant, moins un jour = fin du mois civil
+        if cursor.month == 12:
+            fin_mois = date(cursor.year + 1, 1, 1) - timedelta(days=1)
+        else:
+            fin_mois = date(cursor.year, cursor.month + 1, 1) - timedelta(days=1)
+        borne_fin = min(fin_mois, end)
+        ranges.append((cursor.isoformat(), borne_fin.isoformat()))
+        cursor = borne_fin + timedelta(days=1)
+    return ranges
+
+
 def run_update(
     config: Config,
     date_start: str | None = None,

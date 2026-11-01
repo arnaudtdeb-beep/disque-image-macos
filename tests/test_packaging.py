@@ -161,6 +161,21 @@ class TestAssemblage(unittest.TestCase):
         ]
         self.assertEqual(trouves, [], f"contenu inutile dans l'image : {trouves}")
 
+    def test_config_embarque_optionnel(self):
+        # Sans config fourni, aucun config.json ni .bundle dans l'image (le
+        # défaut reste DILA, sans secret).
+        payload = self.racine / dmg_mod.PAYLOAD
+        self.assertFalse((payload / "config.json.bundle").exists())
+
+    def test_config_embarque_quand_fourni(self):
+        # Avec --config-json, le fichier est copié sous config.json.bundle.
+        source = Path(self.tmp) / "config_perso.json"
+        source.write_text('{"source": "piste", "client_id": "x", "client_secret": "y"}')
+        racine = dmg_mod.stage(Path(self.tmp) / "image_cfg", "9.9.9", source)
+        bundle = racine / dmg_mod.PAYLOAD / "config.json.bundle"
+        self.assertTrue(bundle.is_file())
+        self.assertIn("piste", bundle.read_text())
+
     def test_aucun_fichier_compile(self):
         self.assertEqual([p.name for p in self.racine.rglob("*.pyc")], [])
 

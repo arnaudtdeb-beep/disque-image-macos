@@ -23,6 +23,7 @@ jobs:
     # macos-14 est en cours de retrait par GitHub ; macos-15 reste compatible.
     runs-on: macos-15
     env:
+      CRIM_HEBDO_CONFIG_JSON: ${{ secrets.CRIM_HEBDO_CONFIG_JSON }}
       DEVELOPER_CERTIFICATE_BASE64: ${{ secrets.DEVELOPER_CERTIFICATE_BASE64 }}
       DEVELOPER_CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_CERTIFICATE_PASSWORD }}
       APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -43,15 +44,31 @@ jobs:
       - name: Installer dmgbuild
         run: python3 -m pip install --disable-pip-version-check dmgbuild==1.6.7
 
+      - name: Préparer la configuration embarquée (clés PISTE)
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Le secret contient le JSON complet (source piste + client_id +
+          # client_secret). Écrit hors du dépôt, il n'est jamais committé ; on
+          # ne l'affiche pas (masqué par GitHub de toute façon).
+          if [[ -n "${CRIM_HEBDO_CONFIG_JSON:-}" ]]; then
+            printf '%s' "$CRIM_HEBDO_CONFIG_JSON" > "$RUNNER_TEMP/config.json"
+            echo "config.json embarqué : oui (source piste)"
+          else
+            echo "config.json embarqué : NON — l'app utilisera la source DILA (sans clé)"
+          fi
+
       - name: Construire l'image
         env:
           VERSION: ${{ inputs.version }}
         run: |
-          if [ -n "$VERSION" ]; then
-            python3 tools/build_dmg.py --version "$VERSION"
-          else
-            python3 tools/build_dmg.py
+          set -euo pipefail
+          ARGS=()
+          if [[ -n "$VERSION" ]]; then ARGS+=(--version "$VERSION"); fi
+          if [[ -f "$RUNNER_TEMP/config.json" ]]; then
+            ARGS+=(--config-json "$RUNNER_TEMP/config.json")
           fi
+          python3 tools/build_dmg.py "${ARGS[@]}"
 
       - name: Signer et notarier l'image (si les identifiants sont configurés)
         id: notarize

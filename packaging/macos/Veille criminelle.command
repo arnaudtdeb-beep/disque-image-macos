@@ -48,6 +48,13 @@ installe_projet() {
     cp -R "$SOURCE/crim-hebdo/$d" "$RACINE/$d" || return 1
   done
   cp -p "$SOURCE/crim-hebdo/config.example.json" "$RACINE/config.example.json"
+  # config.json embarqué dans l'image (clés PISTE, source piste). On ne l'écrit
+  # qu'au premier lancement : une config déjà présente (saisie par l'utilisateur)
+  # n'est jamais écrasée.
+  if [ -f "$SOURCE/crim-hebdo/config.json.bundle" ] && [ ! -f "$RACINE/config.json" ]; then
+    cp -p "$SOURCE/crim-hebdo/config.json.bundle" "$RACINE/config.json"
+    chmod 600 "$RACINE/config.json" 2>/dev/null
+  fi
   cp -p "$SOURCE/crim-hebdo/README.md" "$RACINE/README.md"
   [ -f "$SOURCE/crim-hebdo/VERSION" ] && cp -p "$SOURCE/crim-hebdo/VERSION" "$RACINE/VERSION"
   find "$RACINE" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null

@@ -462,6 +462,15 @@ que Gatekeeper ne demande pas d'autorisation manuelle aux personnes qui
 téléchargent une version publiée, le workflow GitHub signe l'image avec un
 certificat Apple Developer ID puis la fait notarier par Apple.
 
+Pour que l'image fonctionne en **Judilibre avec vos clés dès le premier
+lancement**, ajoutez un secret GitHub `CRIM_HEBDO_CONFIG_JSON` contenant le
+JSON complet de votre `config.json` (source « piste », `client_id`,
+`client_secret`). Le workflow l'embarque dans l'image sous `config.json.bundle`
+et le lanceur le pose dans `~/crim-hebdo/config.json` au premier démarrage.
+Sans ce secret, l'image n'embarque aucune clé et se rabat sur la source DILA
+(sans authentification). Attention : ce secret place les clés en clair dans
+l'image ; ne la diffusez pas.
+
 La publication signée nécessite un compte Apple Developer et les secrets GitHub
 `DEVELOPER_CERTIFICATE_BASE64`, `DEVELOPER_CERTIFICATE_PASSWORD`, `APPLE_ID`,
 `APPLE_TEAM_ID` et `APPLE_APP_SPECIFIC_PASSWORD`. Sans ces secrets, les builds

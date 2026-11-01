@@ -37,7 +37,7 @@ from crim_hebdo.textutil import (  # noqa: E402
     zone_text,
 )
 from crim_hebdo.themes import classify  # noqa: E402
-from crim_hebdo.weekly import _keys_of, last_week  # noqa: E402
+from crim_hebdo.weekly import _keys_of, last_week, month_ranges  # noqa: E402
 
 INTRO = "Sur le rapport de M. le conseiller rapporteur.\n\nVu l'article 431 du code de procédure pénale."
 EXPOSE = (
@@ -342,6 +342,26 @@ class TestWeekly(unittest.TestCase):
         self.assertEqual(end, "2026-09-30")
         delta = (date.fromisoformat(end) - date.fromisoformat(start)).days
         self.assertEqual(delta, 6)
+
+    def test_month_ranges_decoupe_par_mois_civil(self):
+        tranches = month_ranges("2025-01-01", "2025-12-31")
+        self.assertEqual(len(tranches), 12)
+        self.assertEqual(tranches[0], ("2025-01-01", "2025-01-31"))
+        self.assertEqual(tranches[-1], ("2025-12-01", "2025-12-31"))
+
+    def test_month_ranges_tronque_les_bornes(self):
+        # première borne mi-janvier, dernière mi-mars
+        tranches = month_ranges("2025-01-15", "2025-03-10")
+        self.assertEqual(tranches[0], ("2025-01-15", "2025-01-31"))
+        self.assertEqual(tranches[-1], ("2025-03-01", "2025-03-10"))
+        self.assertEqual(len(tranches), 3)
+
+    def test_month_ranges_un_seul_mois(self):
+        self.assertEqual(month_ranges("2025-02-01", "2025-02-28"), [("2025-02-01", "2025-02-28")])
+
+    def test_month_ranges_fin_avant_debut_leve(self):
+        with self.assertRaises(ValueError):
+            month_ranges("2025-03-01", "2025-02-01")
 
     def test_keys_of(self):
         keys = _keys_of(SHORT)

@@ -26,7 +26,7 @@ from .piste import MissingCredentials, PisteError
 from .report import write_reports
 from .store import Store
 from .summary import render_card_text
-from .weekly import last_week, run_update
+from .weekly import last_week, month_ranges, run_update
 
 SAMPLE_PATH = PROJECT_ROOT / "samples" / "demo_arrets.json"
 
@@ -73,6 +73,51 @@ def cmd_update(args: argparse.Namespace) -> int:
         include_annual = True
     elif getattr(args, "no_historique", False):
         include_annual = False
+
+    # --par-mois : découpe la période en mois civils et traite chacun. Indispensable
+    # pour la source PISTE sur une longue période : un seul appel /search est borné
+    # par max_pages × page_size, un mois de chambre criminelle reste largement
+    # en dessous. On agrège les totaux et on conserve le dernier rapport.
+    if getattr(args, "par_mois", False) and date_start and date_end:
+        store = Store(config.data_dir)
+        total_found = total_new = total_skipped = total_bulletin = 0
+        try:
+            tranches = month_ranges(date_start, date_end)
+            for i, (m_start, m_end) in enumerate(tranches, start=1):
+                print(f"\n=== Mois {i}/{len(tranches)} : {m_start} → {m_end} ===")
+                result = run_update(
+                    config,
+                    date_start=m_start,
+                    date_end=m_end,
+                    store=store,
+                    force=args.force,
+                    source=config.source,
+                    include_annual=include_annual,
+                )
+                total_found += result.found
+                total_new += result.new
+                total_skipped += result.skipped
+                total_bulletin += result.bulletin
+        except MissingCredentials as exc:
+            print(f"\nConfiguration manquante.\n{exc}\n", file=sys.stderr)
+            return 2
+        except PisteError as exc:
+            print(f"\nÉchec de l'appel PISTE : {exc}", file=sys.stderr)
+            return 3
+        except DilaError as exc:
+            print(f"\nÉchec de l'accès aux données ouvertes DILA : {exc}", file=sys.stderr)
+            return 3
+        except ValueError as exc:
+            print(f"\nConfiguration invalide : {exc}", file=sys.stderr)
+            return 2
+        finally:
+            store.close()
+        print(
+            f"\nTOTAL sur {date_start} → {date_end} : {total_found} arrêt(s) · "
+            f"{total_new} nouveau(x) · {total_skipped} déjà connu(s) · "
+            f"{total_bulletin} au bulletin · source {config.source}"
+        )
+        return 0
 
     store = Store(config.data_dir)
     try:
@@ -338,6 +383,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-historique",
         action="store_true",
         help="ne pas télécharger le dump annuel (hebdomadaires seulement)",
+    )
+    p_update.add_argument(
+        "--par-mois",
+        action="store_true",
+        help="découper la période en mois civils (recommandé pour PISTE sur une longue période)",
     )
     p_update.set_defaults(func=cmd_update)
 
