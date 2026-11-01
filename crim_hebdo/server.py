@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from .analysis import is_unpublished, publication_labels
+from .analysis import is_unpublished, normalize_publication, publication_labels
 from .config import Config, load_config
 from .piste import PisteError
 from .store import Store
@@ -46,7 +46,7 @@ def _project(row: dict[str, Any]) -> dict[str, Any]:
     """Ligne de base → objet affiche dans l'interface."""
     meta = dict((row.get("analysis") or {}).get("meta") or {})
     analysis = row.get("analysis") or {}
-    publication = [str(p).lower() for p in (row.get("publication") or [])]
+    publication = normalize_publication(row.get("publication"))
     meta.update(
         {
             "id": row.get("id"),

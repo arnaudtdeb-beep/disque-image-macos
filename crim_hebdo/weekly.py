@@ -30,6 +30,7 @@ from .analysis import (
     is_bulletin,
     is_rapport,
     is_unpublished,
+    normalize_publication,
     publication_labels,
 )
 from .config import Config
@@ -437,7 +438,7 @@ def _card_as_dict_from_row(row: dict[str, Any]) -> dict[str, Any]:
     conservé dans l'analyse au moment de l'écriture)."""
     analysis = row.get("analysis") or {}
     meta: dict[str, Any] = dict(analysis.get("meta") or {})
-    publication = [str(p).lower() for p in (row.get("publication") or [])]
+    publication = normalize_publication(row.get("publication"))
     meta.update(
         {
             "id": row.get("id"),

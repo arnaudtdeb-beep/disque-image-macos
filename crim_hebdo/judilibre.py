@@ -55,7 +55,12 @@ class JudilibreClient:
 
         date_start / date_end : format ISO court (AAAA-MM-JJ).
         """
+        # Judilibre est un moteur de recherche : sans « query », /search ne
+        # renvoie AUCUN resultat (total = 0), meme avec des filtres de date et
+        # de chambre. Pour lister une periode entiere on envoie le joker « * »
+        # (« tout »), puis on filtre par dates et par chambre.
         params: dict[str, Any] = {
+            "query": "*",
             "jurisdiction": self.config.jurisdiction,
             "date_start": date_start,
             "date_end": date_end,

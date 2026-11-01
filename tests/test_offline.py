@@ -225,13 +225,18 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(card.meta["inedit"])
 
     def test_detection_des_inedits(self):
+        # Taxonomie Judilibre : b=bulletin, r=rapport, l=lettres, c=communiqué,
+        # n=non publié. Seules b/r/l/c comptent comme « publié ».
         self.assertTrue(is_unpublished([]))
         self.assertTrue(is_unpublished(None))
+        self.assertTrue(is_unpublished(["n"]))  # « non publié » = inédit
         self.assertFalse(is_unpublished(["b"]))
         self.assertFalse(is_unpublished(["r"]))
+        self.assertFalse(is_unpublished(["l"]))  # publié aux lettres de chambre
         self.assertFalse(is_unpublished(["c"]))  # communiqué = publiée
         # Un arrêt au bulletin n'est jamais inédit.
         self.assertFalse(is_unpublished(["b", "r"]))
+        self.assertFalse(is_unpublished(["b", "n"]))
 
     def test_une_decision_publiee_n_est_pas_inedite(self):
         card = build_card(SHORT, FULL, Config(use_llm=False))

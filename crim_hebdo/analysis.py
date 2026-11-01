@@ -23,20 +23,56 @@ from .themes import classify, official_themes
 
 # Niveaux de publication Judilibre. Le libellé officiel complet est relu
 # depuis /taxonomy?id=publication quand le compte y a accès.
+# Libellés officiels de la taxonomie Judilibre (/taxonomy?id=publication) :
+#   b = Publié au Bulletin, r = Publié au Rapport,
+#   l = Publié aux Lettres de chambre, c = Communiqué, n = Non publié.
 PUBLICATION_LABELS = {
     "b": "Publié au bulletin (B)",
     "r": "Publié au rapport (R) — décision de principe",
-    "c": "Avec communiqué de la Cour",
-    "l": "Publié au recueil (autre publication officielle)",
-    "p": "Publié au recueil",
-    "e": "Traduction / décision étrangère",
-    "t": "Arrêt traduit en anglais",
-    "n": "Publié au bulletin (arrêt non inédit)",
-    "d": "Décision publicada (données ouvertes)",
+    "l": "Publié aux lettres de chambre (L)",
+    "c": "Avec communiqué de la Cour (C)",
+    "n": "Non publié (inédit)",
 }
 
 COUR_URL = "https://www.courdecassation.fr/decision/{id}"
 COUR_SEARCH_URL = "https://www.courdecassation.fr/recherche-judilibre?judilibre_juridiction=cc"
+
+
+# Judilibre renvoie parfois les codes (b, r, l, c, n) et parfois les libellés
+# en toutes lettres (« Publié au bulletin »). On ramène tout aux codes pour que
+# les tests et compteurs (bulletin, rapport, inédit) soient fiables.
+_PUBLICATION_TEXT_TO_CODE = {
+    "publié au bulletin": "b",
+    "publie au bulletin": "b",
+    "bulletin": "b",
+    "publié au rapport": "r",
+    "publie au rapport": "r",
+    "rapport": "r",
+    "publié aux lettres de chambre": "l",
+    "publie aux lettres de chambre": "l",
+    "lettres de chambre": "l",
+    "lettres": "l",
+    "communiqué": "c",
+    "communique": "c",
+    "non publié": "n",
+    "non publie": "n",
+    "inédit": "n",
+    "inedit": "n",
+}
+
+
+def normalize_publication(values: list[str] | None) -> list[str]:
+    """Ramène chaque valeur (code ou libellé) au code Judilibre canonique.
+
+    Les valeurs inconnues sont conservées en minuscules pour ne rien perdre.
+    """
+    out: list[str] = []
+    for raw in values or []:
+        key = str(raw).strip().lower()
+        code = _PUBLICATION_TEXT_TO_CODE.get(key, key)
+        if code and code not in out:
+            out.append(code)
+    return out
 
 
 def publication_labels(keys: list[str] | None) -> list[str]:
@@ -51,9 +87,11 @@ def is_rapport(keys: list[str] | None) -> bool:
     return any(str(k).lower() == "r" for k in keys or [])
 
 
-# Clés de publication qui, à elles seules, signalent une décision « publiée ».
-# Tout le reste (absence de clé, ou clés hors de cet ensemble) vaut « inédit ».
-PUBLISHED_KEYS = {"b", "r", "c", "l", "p", "e", "t", "n", "d"}
+# Clés qui, à elles seules, signalent une décision « publiée » au sens de la
+# taxonomie Judilibre : bulletin, rapport, lettres de chambre, communiqué.
+# Tout le reste — et notamment « n » (= non publié) ou une liste vide — vaut
+# « inédit ». C'est le cas de la grande majorité des arrêts Judilibre.
+PUBLISHED_KEYS = {"b", "r", "l", "c"}
 
 
 def is_unpublished(keys: list[str] | None) -> bool:
@@ -107,7 +145,7 @@ def build_card(
     zones = full.get("zones") or {}
     zone_texts = all_zones(text, zones)
 
-    publication = [str(p).lower() for p in (short.get("publication") or full.get("publication") or [])]
+    publication = normalize_publication(short.get("publication") or full.get("publication"))
     official_summary = short.get("summary") or _title_of(full)
     ecli = short.get("ecli") or find_ecli(text)
 
