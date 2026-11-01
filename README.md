@@ -113,6 +113,7 @@ clé, et la copier dans `config.json`.
 | **Portée** | « première application », « fait divergence », novation | littéral |
 | **Thèmes de veille** | nullité, détention provisoire, garde à vue… **avec les extraits qui justifient l'attribution** | déduit, justifié |
 | **Publié au bulletin** | repère 📌, avec le n° de bulletin si l'enrichissement Légifrance est actif | métadonnée |
+| **Inédit (non publié)** | repère 🆕 pour les arrêts ni au bulletin ni au rapport (source Judilibre) | métadonnée |
 | **Matière officielle** | entrées principales du sommaire de la Cour (`DOUANES`, `PEINES`, `ACTION CIVILE`…) | littéral |
 
 ### Fidélité de la synthèse — le point important
@@ -191,7 +192,7 @@ python3 -m crim_hebdo serve          # http://127.0.0.1:8765
 ```
 
 - périodes prédéfinies (7 jours, semaine dernière, 30 jours, 90 jours, tout) ;
-- compteur d'arrêts, de décisions publiées au bulletin, de cassations ;
+- compteur d'arrêts, de décisions publiées au bulletin, d'**inédits**, de cassations ;
 - **filtrage par thème** (combinable) et filtre « Interest particulier » ;
 - recherche plein texte sur l'attendu, les motifs, les textes appliqués et le
   texte intégral ;
@@ -438,9 +439,14 @@ qui écrase la précédente, `textContent` sur un élément absent). Ils demande
   automatiquement au premier lancement (ou avec `update --historique`). Il
   couvre l'historique conservé par la DILA, mais pas au-delà de ce qu'elle
   publie : les décisions antérieures restent hors de portée de ce flux.
-- **Tous les arrêts importés en source DILA sont publiés au bulletin**, par
-  construction : c'est le contenu des weekly releases. Pour suivre les arrêts non
-  publiés, il faut Judilibre (`--source piste`).
+- **En source DILA, tous les arrêts sont publiés au bulletin**, par construction
+  (c'est le contenu des weekly releases). Les **arrêts inédits** (non publiés)
+  n'existent que via Judilibre (`--source piste`). Les deux sources convergent
+  dans la même base : lancez `update` (DILA, publiés) puis
+  `update --source piste` (Judilibre, publiés + inédits) pour couvrir les deux.
+  Une fois Judilibre actif, chaque arrêt porte un repère explicite : 📌 bulletin,
+  📖 rapport, ou 🆕 inédit — dans les rapports et l'interface (statistiques,
+  filtre « Inédits uniquement »).
 - **Les quotas PISTE**, si vous retenez cette source, s'appliquent : une mise à
   jour hebdomadaire est très en deçà des limites usuelles, mais un rattrapage
   sur plusieurs mois peut demander de découper les requêtes par tranches.

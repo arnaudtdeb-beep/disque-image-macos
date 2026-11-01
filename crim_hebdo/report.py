@@ -39,6 +39,7 @@ Généré le {generated} · source : {source}
 - **Arrêts recensés :** {total}
 - **Publiés au bulletin (B) :** {bulletin}
 - **Publiés au rapport (R) :** {rapport}
+- **Inédits (non publiés) :** {inedit}
 
 Les synthèses ci-dessous sont des **extraits vérifiés du texte de la Cour**
 (zone d'origine indiquée). Elles ne remplacent pas la lecture de l'arrêt.
@@ -89,6 +90,8 @@ def decision_markdown(card: dict[str, Any]) -> str:
         badges.append(f"📌 **Publié au bulletin (B)**{f' — {badge}' if badge else ''}")
     if meta.get("au_rapport"):
         badges.append("📖 Publié au rapport (R)")
+    if meta.get("inedit"):
+        badges.append("🆕 Inédit (non publié)")
     for label in meta.get("publication_labels") or []:
         if "communiqué" in label.lower():
             badges.append(f"📢 {label}")
@@ -206,6 +209,7 @@ def theme_overview(cards: list[dict[str, Any]]) -> str:
 def build_markdown(cards: list[dict[str, Any]], date_start: str, date_end: str) -> str:
     bulletin = [c for c in cards if (c.get("meta") or {}).get("au_bulletin")]
     rapport = [c for c in cards if (c.get("meta") or {}).get("au_rapport")]
+    inedit = [c for c in cards if (c.get("meta") or {}).get("inedit")]
     header = HEADER.format(
         start=date_start,
         end=date_end,
@@ -214,6 +218,7 @@ def build_markdown(cards: list[dict[str, Any]], date_start: str, date_end: str) 
         total=len(cards),
         bulletin=len(bulletin),
         rapport=len(rapport),
+        inedit=len(inedit),
     )
     body = [header, DISCLAIMER, "", theme_overview(cards), ""]
     if bulletin:
@@ -320,6 +325,7 @@ def build_json(cards: list[dict[str, Any]], date_start: str, date_end: str) -> s
         "source": source_label(cards) + " — licence ouverte 2.0",
         "nombre_arrets": len(cards),
         "nombre_bulletin": sum(1 for c in cards if (c.get("meta") or {}).get("au_bulletin")),
+        "nombre_inedits": sum(1 for c in cards if (c.get("meta") or {}).get("inedit")),
         "arrets": [
             {
                 "meta": c.get("meta"),

@@ -16,7 +16,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from crim_hebdo.analysis import build_card, is_bulletin, publication_labels  # noqa: E402
+from crim_hebdo.analysis import (  # noqa: E402
+    build_card,
+    is_bulletin,
+    is_unpublished,
+    publication_labels,
+)
 from crim_hebdo.config import Config  # noqa: E402
 from crim_hebdo.report import build_markdown, build_json  # noqa: E402
 from crim_hebdo.store import Store  # noqa: E402
@@ -216,6 +221,21 @@ class TestAnalysis(unittest.TestCase):
         short = dict(SHORT, publication=[])
         card = build_card(short, FULL, Config(use_llm=False))
         self.assertFalse(card.meta["au_bulletin"])
+        # Sans aucune clé de publication, la décision est un inédit.
+        self.assertTrue(card.meta["inedit"])
+
+    def test_detection_des_inedits(self):
+        self.assertTrue(is_unpublished([]))
+        self.assertTrue(is_unpublished(None))
+        self.assertFalse(is_unpublished(["b"]))
+        self.assertFalse(is_unpublished(["r"]))
+        self.assertFalse(is_unpublished(["c"]))  # communiqué = publiée
+        # Un arrêt au bulletin n'est jamais inédit.
+        self.assertFalse(is_unpublished(["b", "r"]))
+
+    def test_une_decision_publiee_n_est_pas_inedite(self):
+        card = build_card(SHORT, FULL, Config(use_llm=False))
+        self.assertFalse(card.meta["inedit"])
 
 
 class TestStore(unittest.TestCase):
@@ -291,6 +311,23 @@ class TestReport(unittest.TestCase):
         payload = json.loads(build_json(self._cards(), "2026-09-28", "2026-10-04"))
         self.assertEqual(payload["nombre_arrets"], 1)
         self.assertEqual(payload["nombre_bulletin"], 1)
+        self.assertEqual(payload["nombre_inedits"], 0)
+
+    def _cards_inedit(self):
+        short = dict(SHORT, publication=[])
+        card = build_card(short, FULL, Config(use_llm=False))
+        return [{"meta": card.meta, "analysis": card.analysis, "raw": card.raw}]
+
+    def test_markdown_signale_les_inedits(self):
+        md = build_markdown(self._cards_inedit(), "2026-09-28", "2026-10-04")
+        self.assertIn("Inédit (non publié)", md)
+        self.assertIn("Inédits (non publiés) :** 1", md)
+        self.assertNotIn("Publié au bulletin (B)", md)
+
+    def test_json_compte_les_inedits(self):
+        payload = json.loads(build_json(self._cards_inedit(), "2026-09-28", "2026-10-04"))
+        self.assertEqual(payload["nombre_inedits"], 1)
+        self.assertEqual(payload["nombre_bulletin"], 0)
 
 
 class TestWeekly(unittest.TestCase):

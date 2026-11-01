@@ -24,7 +24,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 from . import dila as dila_source
-from .analysis import DecisionCard, build_card, is_bulletin, is_rapport, publication_labels
+from .analysis import (
+    DecisionCard,
+    build_card,
+    is_bulletin,
+    is_rapport,
+    is_unpublished,
+    publication_labels,
+)
 from .config import Config
 from .judilibre import JudilibreClient
 from .legifrance import LegifranceClient
@@ -443,6 +450,7 @@ def _card_as_dict_from_row(row: dict[str, Any]) -> dict[str, Any]:
             "publication_labels": publication_labels(publication),
             "au_bulletin": is_bulletin(publication),
             "au_rapport": is_rapport(publication),
+            "inedit": is_unpublished(publication),
             "solution": row.get("solution"),
             "solution_label": solution_label(row.get("solution")),
             "summary": row.get("summary"),

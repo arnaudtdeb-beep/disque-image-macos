@@ -51,6 +51,22 @@ def is_rapport(keys: list[str] | None) -> bool:
     return any(str(k).lower() == "r" for k in keys or [])
 
 
+# Clés de publication qui, à elles seules, signalent une décision « publiée ».
+# Tout le reste (absence de clé, ou clés hors de cet ensemble) vaut « inédit ».
+PUBLISHED_KEYS = {"b", "r", "c", "l", "p", "e", "t", "n", "d"}
+
+
+def is_unpublished(keys: list[str] | None) -> bool:
+    """Vrai si la décision n'est ni au bulletin ni au rapport ni autrement publiée.
+
+    Ce cas n'apparaît qu'avec la source Judilibre : les fichiers DILA ne
+    contiennent que des arrêts publiés au bulletin. Une décision « inédite »
+    est donc, en pratique, un arrêt non publié récupéré via l'API Judilibre.
+    """
+    published = {str(k).lower() for k in keys or []}
+    return not (published & PUBLISHED_KEYS)
+
+
 @dataclass
 class DecisionCard:
     meta: dict[str, Any]
@@ -143,6 +159,7 @@ def build_card(
         "publication_labels": publication_labels(publication),
         "au_bulletin": bulletin,
         "au_rapport": is_rapport(publication),
+        "inedit": is_unpublished(publication),
         "summary": official_summary,
         "particulier_interet": bool(short.get("particularInterest") or full.get("particularInterest")),
         "extrait_partiel": bool(full.get("partial")),
@@ -218,6 +235,7 @@ def summarise_for_display(card: DecisionCard) -> dict[str, Any]:
         "publication_labels": card.meta.get("publication_labels"),
         "au_bulletin": card.meta.get("au_bulletin"),
         "au_rapport": card.meta.get("au_rapport"),
+        "inedit": card.meta.get("inedit"),
         "bulletin_numero": card.meta.get("bulletin_numero"),
         "summary": card.meta.get("summary"),
         "themes_officiels": card.meta.get("themes_officiels"),

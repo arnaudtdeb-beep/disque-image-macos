@@ -88,11 +88,13 @@ function render() {
 function renderStats() {
   const items = state.items;
   const bulletin = items.filter((i) => i.meta.au_bulletin).length;
+  const inedits = items.filter((i) => i.meta.inedit).length;
   const cassation = items.filter((i) => (i.meta.solution || "").toLowerCase().includes("casse")).length;
   const distinct = new Set();
   items.forEach((i) => (i.themes || []).forEach((t) => distinct.add(t.code)));
   $("#stat-total").textContent = items.length;
   $("#stat-bulletin").textContent = bulletin;
+  $("#stat-inedits").textContent = inedits;
   $("#stat-cassation").textContent = cassation;
   $("#stat-themes").textContent = distinct.size;
 }
@@ -149,6 +151,7 @@ function matches(item) {
     if (!any) return false;
   }
   if ($("#only-bulletin").checked && !item.meta.au_bulletin) return false;
+  if ($("#only-inedit").checked && !item.meta.inedit) return false;
   if ($("#only-particulier").checked && !item.meta.particulier_interet) return false;
   const solution = $("#solution").value;
   if (solution && item.meta.solution !== solution) return false;
@@ -181,6 +184,8 @@ function sortItems(items) {
   if (mode === "date-asc") return copy.sort(byDate);
   if (mode === "bulletin")
     return copy.sort((a, b) => (b.meta.au_bulletin ? 1 : 0) - (a.meta.au_bulletin ? 1 : 0) || byDate(b, a));
+  if (mode === "inedit")
+    return copy.sort((a, b) => (b.meta.inedit ? 1 : 0) - (a.meta.inedit ? 1 : 0) || byDate(b, a));
   if (mode === "theme")
     return copy.sort((a, b) => {
       const la = (a.themes[0] || {}).label || "";
@@ -226,6 +231,7 @@ function buildCard(item, template) {
   const card = template.content.firstElementChild.cloneNode(true);
   const meta = item.meta;
   if (meta.au_bulletin) card.classList.add("bulletin");
+  if (meta.inedit) card.classList.add("inedit");
 
   card.querySelector(".date").textContent = meta.decision_date || "";
   card.querySelector(".num").textContent = `n° ${meta.number || "—"}`;
@@ -240,6 +246,7 @@ function buildCard(item, template) {
     badges.append(badge);
   }
   if (meta.au_rapport) badges.append(el("span", "badge r", "📖 Rapport (R)"));
+  if (meta.inedit) badges.append(el("span", "badge inedit", "🆕 Inédit"));
   (meta.publication_labels || []).forEach((label) => {
     if (/communiqué|recueil|tradu/i.test(label)) badges.append(el("span", "badge", label));
   });
@@ -368,7 +375,8 @@ function toMarkdown(items) {
     `# Arrêts de la chambre criminelle — ${slug(items)}`,
     "",
     `Généré le ${new Date().toLocaleString("fr-FR")} · ${items.length} arrêt(s), ` +
-      `${items.filter((i) => i.meta.au_bulletin).length} publié(s) au bulletin.`,
+      `${items.filter((i) => i.meta.au_bulletin).length} publié(s) au bulletin, ` +
+      `${items.filter((i) => i.meta.inedit).length} inédit(s).`,
     "",
     "> Synthèses issues du texte de la Cour (extraits vérifiés). La citation de l'arrêt prévaut.",
     "",
@@ -377,6 +385,7 @@ function toMarkdown(items) {
     const meta = item.meta;
     lines.push(`## ${meta.decision_date} — pourvoi n° ${meta.number}`, "");
     if (meta.au_bulletin) lines.push("**Publié au bulletin (B)**", "");
+    if (meta.inedit) lines.push("**Inédit (non publié)**", "");
     if (meta.ecli) lines.push(`- ECLI : \`${meta.ecli}\``);
     lines.push(`- Solution : ${meta.solution_label || meta.solution || "—"}`);
     const themes = (item.themes || []).map((t) => `${t.icon} ${t.label}`).join(" · ");

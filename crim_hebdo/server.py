@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 
-from .analysis import publication_labels
+from .analysis import is_unpublished, publication_labels
 from .config import Config, load_config
 from .piste import PisteError
 from .store import Store
@@ -59,6 +59,7 @@ def _project(row: dict[str, Any]) -> dict[str, Any]:
             "publication_labels": publication_labels(publication),
             "au_bulletin": meta.get("au_bulletin", "b" in publication),
             "au_rapport": meta.get("au_rapport", "r" in publication),
+            "inedit": meta.get("inedit", is_unpublished(publication)),
             "solution": row.get("solution"),
             "solution_label": solution_label(row.get("solution")),
             "summary": row.get("summary"),
@@ -246,6 +247,7 @@ class Handler(BaseHTTPRequestHandler):
             "fin": end,
             "total": len(items),
             "au_bulletin": sum(1 for i in items if i["meta"]["au_bulletin"]),
+            "inedits": sum(1 for i in items if i["meta"].get("inedit")),
             "arrets": items,
             "busy": self.state.busy,
             "last_error": self.state.last_error,

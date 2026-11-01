@@ -84,6 +84,7 @@ button:disabled { opacity: .55; cursor: progress; }
 .list { padding: .4rem 1.2rem 2rem; display: grid; gap: .6rem; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: .7rem .9rem; }
 .card.bulletin { border-left: 3px solid var(--bulletin); }
+.card.inedit { border-left: 3px solid var(--accent); }
 .card-head { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: space-between; }
 .card-title { display: flex; flex-wrap: wrap; gap: .55rem; align-items: baseline; }
 .date { color: var(--muted); font-variant-numeric: tabular-nums; font-size: .85rem; }
@@ -95,6 +96,7 @@ button:disabled { opacity: .55; cursor: progress; }
 .badge.r { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
 .badge.cassation { color: var(--cassation); }
 .badge.star { background: var(--bulletin-soft); border-color: var(--bulletin); color: var(--bulletin); }
+.badge.inedit { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 650; }
 .official { color: var(--muted); font-size: .82rem; margin-top: .25rem; }
 .official b { color: var(--ink); font-weight: 600; }
 .card .chips { margin-top: .4rem; }
