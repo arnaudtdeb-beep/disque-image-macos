@@ -433,5 +433,68 @@ class TestServeurRobuste(unittest.TestCase):
         handler._send(200, b"{}", "application/json")
 
 
+class TestConfigTolerant(unittest.TestCase):
+    """Un config.json corrompu ne doit jamais faire planter l'application."""
+
+    def test_extraire_objet_json_prefixe(self):
+        from crim_hebdo.config import _extraire_objet_json
+        self.assertEqual(
+            _extraire_objet_json('uid{"source":"piste","client_id":"a"}'),
+            {"source": "piste", "client_id": "a"},
+        )
+
+    def test_extraire_objet_json_deux_objets(self):
+        from crim_hebdo.config import _extraire_objet_json
+        self.assertEqual(_extraire_objet_json('{"a":1}{"b":2}'), {"a": 1})
+
+    def test_extraire_objet_json_wrapper(self):
+        from crim_hebdo.config import _extraire_objet_json
+        self.assertEqual(_extraire_objet_json("b'{\"a\":1}'"), {"a": 1})
+
+    def test_extraire_objet_json_irrecuperable(self):
+        from crim_hebdo.config import _extraire_objet_json
+        self.assertIsNone(_extraire_objet_json("rien de json"))
+
+    def test_load_config_ne_plante_pas_sur_fichier_casse(self):
+        import json as _json
+        import os
+        from crim_hebdo.config import load_config
+        with tempfile.TemporaryDirectory() as tmp:
+            casse = pathlib.Path(tmp) / "config.json"
+            casse.write_text('uid{"source":"piste","client_id":"ID","client_secret":"S"}')
+            # load_config lit DEFAULT_CONFIG_PATH, pas ce fichier ; on teste
+            # surtout que _from_file(_) ne lève pas et récupère les clés.
+            from crim_hebdo.config import _from_file
+            donnees = _from_file(casse)
+            self.assertEqual(donnees["client_id"], "ID")
+
+
+class TestValidateurConfig(unittest.TestCase):
+    """tools/validate_config.py refuse un config inexploitable."""
+
+    def _valider(self, texte: str) -> int:
+        sys.path.insert(0, str(ROOT / "tools"))
+        import contextlib
+        import io
+        import validate_config as vc
+        with tempfile.TemporaryDirectory() as tmp:
+            f = pathlib.Path(tmp) / "config.json"
+            f.write_text(texte)
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                return vc.valider(f)
+
+    def test_accepte_json_propre(self):
+        self.assertEqual(self._valider('{"source":"piste","client_id":"a","client_secret":"b"}'), 0)
+
+    def test_accepte_prefixe_parasite(self):
+        self.assertEqual(self._valider('uid{"source":"piste","client_id":"a","client_secret":"b"}'), 0)
+
+    def test_refuse_piste_sans_cles(self):
+        self.assertEqual(self._valider('{"source":"piste"}'), 1)
+
+    def test_refuse_non_json(self):
+        self.assertEqual(self._valider("pas de json"), 1)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

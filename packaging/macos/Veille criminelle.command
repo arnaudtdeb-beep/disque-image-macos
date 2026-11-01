@@ -48,22 +48,44 @@ installe_projet() {
     cp -R "$SOURCE/crim-hebdo/$d" "$RACINE/$d" || return 1
   done
   cp -p "$SOURCE/crim-hebdo/config.example.json" "$RACINE/config.example.json"
-  # config.json embarqué dans l'image (clés PISTE, source piste). L'image fait
-  # foi : si elle en embarque un, il remplace celui en place (une image sans
-  # config n'y touche pas). L'ancienne configuration éventuelle est sauvegardée
-  # en config.json.bak pour ne rien perdre.
-  if [ -f "$SOURCE/crim-hebdo/config.json.bundle" ]; then
-    if [ -f "$RACINE/config.json" ] && ! cmp -s "$SOURCE/crim-hebdo/config.json.bundle" "$RACINE/config.json"; then
-      cp -p "$RACINE/config.json" "$RACINE/config.json.bak" 2>/dev/null
-      info "Configuration précédente sauvegardée : config.json.bak"
-    fi
-    cp -p "$SOURCE/crim-hebdo/config.json.bundle" "$RACINE/config.json"
-    chmod 600 "$RACINE/config.json" 2>/dev/null
-  fi
   cp -p "$SOURCE/crim-hebdo/README.md" "$RACINE/README.md"
   [ -f "$SOURCE/crim-hebdo/VERSION" ] && cp -p "$SOURCE/crim-hebdo/VERSION" "$RACINE/VERSION"
   find "$RACINE" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null
   return 0
+}
+
+config_valide() {
+  # Valide un JSON de config. 0 = valide (ou réparable), 1 = invalide/absent.
+  "$PYTHON" - "$1" <<'PY' 2>/dev/null
+import json, sys
+from pathlib import Path
+f = Path(sys.argv[1])
+if not f.is_file():
+    sys.exit(1)
+try:
+    data = json.loads(f.read_text(encoding="utf-8"))
+    sys.exit(0 if isinstance(data, dict) else 1)
+except Exception:
+    sys.exit(1)
+PY
+}
+
+sync_config() {
+  # L'image fait foi : si elle embarque un config.json.bundle, il REMPLACE le
+  # config en place à chaque lancement (une image sans bundle n'y touche pas).
+  # On ne réécrit que si le contenu diffère, et on garde une sauvegarde .bak.
+  local bundle="$SOURCE/crim-hebdo/config.json.bundle"
+  local cible="$RACINE/config.json"
+  [ -f "$bundle" ] || return 0
+  if [ -f "$cible" ] && cmp -s "$bundle" "$cible"; then
+    return 0
+  fi
+  if [ -f "$cible" ]; then
+    cp -p "$cible" "$RACINE/config.json.bak" 2>/dev/null && info "Ancienne config sauvegardée : config.json.bak"
+  fi
+  cp -p "$bundle" "$cible" || return 1
+  chmod 600 "$cible" 2>/dev/null
+  info "Configuration (clés PISTE) installée."
 }
 
 version_differente() {
@@ -103,6 +125,15 @@ if [ ! -f "$RACINE/tools/install.py" ] || version_differente; then
   info "Programme à jour."
 else
   info "Déjà installé dans $RACINE"
+fi
+
+# Le config embarqué est (ré)installé à chaque lancement, même si le programme
+# est « déjà installé » : une image neuve écrase ainsi une config erronée.
+sync_config || { echec "Impossible d'installer la configuration."; attente; exit 1; }
+if [ -f "$RACINE/config.json" ] && ! config_valide "$RACINE/config.json"; then
+  alerte "La configuration locale est illisible ; elle sera réécrite au prochain lancement."
+  rm -f "$RACINE/config.json"
+  sync_config || true
 fi
 
 if [ ! -f "$RACINE/.premier_lancement" ]; then

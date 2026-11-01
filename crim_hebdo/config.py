@@ -126,11 +126,52 @@ def _from_env(env: dict[str, str]) -> dict[str, Any]:
     }
 
 
+def _extraire_objet_json(texte: str) -> dict[str, Any] | None:
+    """Extrait le premier objet JSON valide, même entouré de parasites.
+
+    Cas couverts : JSON suivi de déchets (« Extra data »), préfixe parasite
+    (« uid{...} »), guillemets de copier-coller (« b'{...}' »). Renvoie None si
+    aucun objet exploitable.
+    """
+    texte = texte.strip().lstrip("\ufeff")
+    # Retire un éventuel wrapper b'...' ou une paire de guillemets englobante.
+    if texte[:2] in ("b'", 'b"'):
+        texte = texte[2:]
+    depart = texte.find("{")
+    if depart == -1:
+        return None
+    decodeur = json.JSONDecoder()
+    try:
+        objet, _ = decodeur.raw_decode(texte[depart:])
+    except json.JSONDecodeError:
+        return None
+    return objet if isinstance(objet, dict) else None
+
+
 def _from_file(path: Path) -> dict[str, Any]:
+    """Lit un config.json sans jamais faire planter l'appelant.
+
+    Un fichier absent ou corrompu (JSON invalide, préfixe parasite) n'est pas
+    une panne fatale : on tente une récupération, et à défaut on ignore le
+    fichier (les valeurs par défaut et l'environnement prennent le relais)
+    plutôt que de lever une exception qui ferait échouer tout le programme.
+    """
     if not path.exists():
         return {}
-    with path.open(encoding="utf-8") as fh:
-        return json.load(fh)
+    try:
+        texte = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {}
+    try:
+        donnees = json.loads(texte)
+        if isinstance(donnees, dict):
+            return donnees
+    except json.JSONDecodeError:
+        pass
+    recupere = _extraire_objet_json(texte)
+    if recupere is not None:
+        return recupere
+    return {}
 
 
 def load_config(path: str | Path | None = None) -> Config:

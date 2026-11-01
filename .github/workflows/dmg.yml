@@ -58,6 +58,16 @@ jobs:
             echo "config.json embarqué : NON — l'app utilisera la source DILA (sans clé)"
           fi
 
+      - name: Valider la configuration embarquée
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f "$RUNNER_TEMP/config.json" ]]; then
+            python3 tools/validate_config.py "$RUNNER_TEMP/config.json"
+          else
+            echo "Aucun config embarqué : l'app utilisera DILA (sans clé). C'est autorisé."
+          fi
+
       - name: Construire l'image
         env:
           VERSION: ${{ inputs.version }}

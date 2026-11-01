@@ -131,15 +131,28 @@ def etape_dossiers(dry_run: bool) -> int:
     return 0
 
 
+def _config_valide(chemin: Path) -> bool:
+    """Un config exploitable est un objet JSON lisible."""
+    import json
+
+    try:
+        donnees = json.loads(chemin.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return False
+    return isinstance(donnees, dict)
+
+
 def etape_configuration(dry_run: bool) -> int:
     cible = ROOT / "config.json"
-    if cible.exists():
+    if cible.exists() and _config_valide(cible):
         ok(f"configuration existante : {cible.name}")
         return 0
+    if cible.exists():
+        warn("configuration illisible : elle sera réécrite (source DILA)")
     if dry_run:
         info("écriture de config.json (source DILA, sans identifiant)")
         return 0
-    result = lancer("init-config", dry_run=False)
+    result = lancer("init-config", "--force", dry_run=False)
     if result:
         return echec("écriture de la configuration impossible")
     return 0
