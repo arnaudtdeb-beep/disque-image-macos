@@ -396,5 +396,42 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(cfg.chambers, ["cr"])
 
 
+class TestServeurRobuste(unittest.TestCase):
+    """Le serveur ne doit pas mourir quand le client coupe la connexion."""
+
+    def test_send_tolere_broken_pipe(self):
+        from crim_hebdo import server as srv
+
+        class WFileFerme:
+            def write(self, _data):
+                raise BrokenPipeError(32, "Broken pipe")
+
+        # Handler sans socket : on teste uniquement _send via un objet minimal.
+        handler = object.__new__(srv.Handler)
+        handler.command = "GET"
+        handler.wfile = WFileFerme()
+        # send_response/headers écriraient sur wfile ; on neutralise.
+        handler.send_response = lambda *a, **k: None
+        handler.send_header = lambda *a, **k: None
+        handler.end_headers = lambda *a, **k: None
+        # Ne doit pas lever.
+        handler._send(200, b"{}", "application/json")
+
+    def test_send_tolere_connexion_reset(self):
+        from crim_hebdo import server as srv
+
+        class WFileReset:
+            def write(self, _data):
+                raise ConnectionResetError(104, "Connection reset")
+
+        handler = object.__new__(srv.Handler)
+        handler.command = "GET"
+        handler.wfile = WFileReset()
+        handler.send_response = lambda *a, **k: None
+        handler.send_header = lambda *a, **k: None
+        handler.end_headers = lambda *a, **k: None
+        handler._send(200, b"{}", "application/json")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

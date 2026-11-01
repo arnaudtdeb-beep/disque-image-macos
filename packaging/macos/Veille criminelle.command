@@ -48,10 +48,15 @@ installe_projet() {
     cp -R "$SOURCE/crim-hebdo/$d" "$RACINE/$d" || return 1
   done
   cp -p "$SOURCE/crim-hebdo/config.example.json" "$RACINE/config.example.json"
-  # config.json embarqué dans l'image (clés PISTE, source piste). On ne l'écrit
-  # qu'au premier lancement : une config déjà présente (saisie par l'utilisateur)
-  # n'est jamais écrasée.
-  if [ -f "$SOURCE/crim-hebdo/config.json.bundle" ] && [ ! -f "$RACINE/config.json" ]; then
+  # config.json embarqué dans l'image (clés PISTE, source piste). L'image fait
+  # foi : si elle en embarque un, il remplace celui en place (une image sans
+  # config n'y touche pas). L'ancienne configuration éventuelle est sauvegardée
+  # en config.json.bak pour ne rien perdre.
+  if [ -f "$SOURCE/crim-hebdo/config.json.bundle" ]; then
+    if [ -f "$RACINE/config.json" ] && ! cmp -s "$SOURCE/crim-hebdo/config.json.bundle" "$RACINE/config.json"; then
+      cp -p "$RACINE/config.json" "$RACINE/config.json.bak" 2>/dev/null
+      info "Configuration précédente sauvegardée : config.json.bak"
+    fi
     cp -p "$SOURCE/crim-hebdo/config.json.bundle" "$RACINE/config.json"
     chmod 600 "$RACINE/config.json" 2>/dev/null
   fi
@@ -119,7 +124,20 @@ else
   (cd "$RACINE" && "$PYTHON" tools/serve_launchd.py install --port "$PORT")
 fi
 CODE=$?
-if [ "$CODE" -ne 0 ]; then
+# Le lanceur peut renvoyer un échec alors que le serveur répond en réalité
+# (par exemple un BrokenPipe transitoire quand le navigateur rafraîchit).
+# On ne conclut à l'échec que si le port ne répond toujours pas.
+repond() { "$PYTHON" - "$PORT" <<'PY' 2>/dev/null
+import sys, urllib.request
+port = sys.argv[1]
+try:
+    with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=0.6) as r:
+        sys.exit(0 if r.status == 200 else 1)
+except Exception:
+    sys.exit(1)
+PY
+}
+if [ "$CODE" -ne 0 ] && ! repond; then
   titre "Le programme n'a pas démarré"
   echec "Le journal technique est ci-dessous."
   [ -f "$JOURNAL_ERR" ] && tail -n 20 "$JOURNAL_ERR"
