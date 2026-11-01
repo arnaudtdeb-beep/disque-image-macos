@@ -22,7 +22,7 @@ from .config import Config
 from .piste import PisteClient
 
 # Cles de la nomenclature Judilibre retenues pour le suivi de la chambre criminelle.
-CHAMBER_CRIM = "crim"
+CHAMBER_CRIM = "cr"  # code Judilibre de la chambre criminelle (≠ "crim")
 PUBLICATION_BULLETIN = "b"
 PUBLICATION_RAPPORT = "r"
 

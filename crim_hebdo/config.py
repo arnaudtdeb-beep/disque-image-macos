@@ -67,7 +67,7 @@ class Config:
 
     # --- perimetre ---
     jurisdiction: str = "cc"
-    chambers: list[str] = field(default_factory=lambda: ["crim"])
+    chambers: list[str] = field(default_factory=lambda: ["cr"])
     formations: list[str] = field(default_factory=list)
     types: list[str] = field(default_factory=list)
 
@@ -186,7 +186,7 @@ def save_template(path: str | Path) -> Path:
         "client_id": "",
         "client_secret": "",
         "use_sandbox": False,
-        "chambers": ["crim"],
+        "chambers": ["cr"],
         "enrich_legifrance": False,
         "only_bulletin": False,
         "use_llm": True,

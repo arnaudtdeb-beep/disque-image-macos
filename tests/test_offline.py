@@ -367,7 +367,8 @@ class TestConfig(unittest.TestCase):
     def test_urls_par_defaut(self):
         cfg = Config()
         self.assertEqual(cfg.judilibre_base, "https://api.piste.gouv.fr/cassation/judilibre/v1.0")
-        self.assertEqual(cfg.chambers, ["crim"])
+        # Judilibre attend le code « cr » pour la chambre criminelle (pas « crim »).
+        self.assertEqual(cfg.chambers, ["cr"])
 
 
 if __name__ == "__main__":

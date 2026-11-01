@@ -169,7 +169,7 @@ class PisteClient:
 
 
 def _flatten_param(value: Any) -> Any:
-    """PISTE attend des parametres repetes (chamber=crim&chamber=civ1)."""
+    """PISTE attend des parametres repetes (chamber=cr&chamber=civ1)."""
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, (list, tuple)):
