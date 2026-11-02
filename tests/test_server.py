@@ -113,6 +113,17 @@ class TestServeLaunchd(unittest.TestCase):
         # Pas de KeepAlive global : un plantage ne doit pas boucler.
         self.assertNotIn("KeepAlive", data)
 
+    def test_liberer_port_port_libre_ne_tue_rien(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import serve_launchd
+        # Un port très improbablement utilisé : libérer ne doit rien casser.
+        self.assertEqual(serve_launchd.liberer_port(59999), 0)
+
+    def test_est_notre_serveur_pid_inexistant(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import serve_launchd
+        self.assertFalse(serve_launchd._est_notre_serveur(999999))
+
 
 if __name__ == "__main__":
     unittest.main()

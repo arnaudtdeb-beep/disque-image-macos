@@ -193,6 +193,60 @@ def installer(port: int, dry_run: bool) -> int:
     return 1
 
 
+def _pids_sur_port(port: int) -> list[int]:
+    """PIDs des processus qui écoutent sur `port` (macOS : lsof)."""
+    if not shutil.which("lsof"):
+        return []
+    result = subprocess.run(  # noqa: S603,S607 - lsof figé
+        ["lsof", "-nP", f"-iTCP:{port}", "-sTCP:LISTEN", "-t"],
+        capture_output=True, text=True,
+    )
+    pids: list[int] = []
+    for ligne in result.stdout.splitlines():
+        ligne = ligne.strip()
+        if ligne.isdigit():
+            pids.append(int(ligne))
+    return pids
+
+
+def _est_notre_serveur(pid: int) -> bool:
+    """Vrai si le PID est bien un `crim_hebdo serve` (pas un autre service)."""
+    if not shutil.which("ps"):
+        return False
+    result = subprocess.run(  # noqa: S603,S607 - ps figé
+        ["ps", "-o", "command=", "-p", str(pid)],
+        capture_output=True, text=True,
+    )
+    commande = result.stdout.strip()
+    # On ne tue QUE nos processus : ligne de commande contenant crim_hebdo.
+    return "crim_hebdo" in commande
+
+
+def liberer_port(port: int) -> int:
+    """Arrête un ancien `crim_hebdo serve` qui occuperait déjà `port`.
+
+    Un serveur orphelin (lancé à la main, ou ancien agent encore vivant) fait
+    échouer le premier démarrage : kickstart/bootstrap ne peuvent pas prendre
+    un port déjà tenu. On l'arrête proprement pour que le premier essai
+    réussisse. Ne touche jamais à un autre logiciel.
+    """
+    libere = 0
+    for pid in _pids_sur_port(port):
+        if pid == os.getpid() or not _est_notre_serveur(pid):
+            continue
+        try:
+            os.kill(pid, 15)  # SIGTERM : arrêt propre
+        except OSError:
+            continue
+        libere += 1
+    if libere:
+        # Laisse au processus le temps de rendre le port.
+        limite = time.monotonic() + 3.0
+        while time.monotonic() < limite and _pids_sur_port(port):
+            time.sleep(0.2)
+    return libere
+
+
 def _lancer_agent() -> tuple[int, str]:
     """Tente kickstart si l'agent est chargé, sinon bootstrap."""
     if est_charge():
@@ -212,6 +266,12 @@ def demarrer(port: int, attendre_port: bool = True) -> int:
     """
     if not PLIST_PATH.exists():
         return installer(port, dry_run=False)
+
+    # Un ancien serveur orphelin peut tenir le port : on le libère d'abord,
+    # sinon le premier essai échoue et il faut relancer une seconde fois.
+    libere = liberer_port(port)
+    if libere:
+        print(f"ancien serveur arrêté sur le port {port} ({libere} processus).", file=sys.stderr)
 
     code, message = _lancer_agent()
     if code == 0 and (not attendre_port or attendre(port)):
