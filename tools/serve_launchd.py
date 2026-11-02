@@ -103,7 +103,7 @@ def port_repond(port: int = PORT_DEFAUT, delai: float = 0.5) -> bool:
         return False
 
 
-def attendre(port: int = PORT_DEFAUT, secondes: float = 15.0) -> bool:
+def attendre(port: int = PORT_DEFAUT, secondes: float = 25.0) -> bool:
     """Attend que l'interface réponde, le temps que Python démarre."""
     limite = time.monotonic() + secondes
     while time.monotonic() < limite:
@@ -193,24 +193,45 @@ def installer(port: int, dry_run: bool) -> int:
     return 1
 
 
+def _lancer_agent() -> tuple[int, str]:
+    """Tente kickstart si l'agent est chargé, sinon bootstrap."""
+    if est_charge():
+        return launchctl("kickstart", "-k", cible())
+    return launchctl("bootstrap", f"gui/{os.getuid()}", str(PLIST_PATH))
+
+
 def demarrer(port: int, attendre_port: bool = True) -> int:
-    """Démarre l'agent, ou le redémarre s'il tourne déjà."""
+    """Démarre l'agent et s'assure que l'interface répond.
+
+    Auto-réparateur : si l'agent est présent mais que l'interface ne répond
+    pas (agent chargé mais mort, plist pointant vers un Python disparu après
+    une mise à jour de macOS, etc.), on réinstalle l'agent (bootout +
+    bootstrap) et on réessaie une fois. Cela évite d'avoir à supprimer un
+    marqueur « premier lancement » pour que le serveur reparte après un
+    redémarrage de la machine.
+    """
     if not PLIST_PATH.exists():
         return installer(port, dry_run=False)
 
-    if est_charge():
-        code, message = launchctl("kickstart", "-k", cible())
-    else:
-        code, message = launchctl("bootstrap", f"gui/{os.getuid()}", str(PLIST_PATH))
+    code, message = _lancer_agent()
+    if code == 0 and (not attendre_port or attendre(port)):
+        return 0
+
+    # Échec (code non nul ou interface muette) : on répare en réinstallant.
+    print("démarrage direct insuffisant, réinstallation de l'agent…", file=sys.stderr)
+    install_code = installer(port, dry_run=False)
+    if install_code == 0:
+        return 0
+
     if code:
         print(f"démarrage impossible : {message}", file=sys.stderr)
-        return 1
-
-    if attendre_port and not attendre(port):
+    if attendre_port and not port_repond(port):
         print("l'interface ne répond pas", file=sys.stderr)
-        print(f"journal : tail -20 {ROOT / 'data' / 'logs' / 'serve.log'}", file=sys.stderr)
-        return 1
-    return 0
+        print(
+            f"journal : tail -20 {ROOT / 'data' / 'logs' / 'serve.err.log'}",
+            file=sys.stderr,
+        )
+    return 1
 
 
 def arreter() -> int:

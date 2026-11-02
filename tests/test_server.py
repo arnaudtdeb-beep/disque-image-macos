@@ -97,5 +97,22 @@ class TestDecisionsTotal(unittest.TestCase):
             self.assertEqual(rep["total"], attendu, attendu)
 
 
+
+class TestServeLaunchd(unittest.TestCase):
+    """L'agent launchd doit se relancer à la connexion et rester simple."""
+
+    def test_plist_runatload(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import serve_launchd
+        data = serve_launchd.build_plist(port=8765)
+        self.assertTrue(data["RunAtLoad"])
+        args = data["ProgramArguments"]
+        self.assertIn("--port", args)
+        self.assertEqual(args[args.index("--port") + 1], "8765")
+        self.assertIn("--no-browser", args)
+        # Pas de KeepAlive global : un plantage ne doit pas boucler.
+        self.assertNotIn("KeepAlive", data)
+
+
 if __name__ == "__main__":
     unittest.main()
