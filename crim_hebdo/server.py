@@ -247,12 +247,25 @@ class Handler(BaseHTTPRequestHandler):
                 if start and end
                 else self.state.store.all_decisions()
             )
-        limit = int(query.get("limit", ["400"])[0] or 400)
-        items = [_project(row) for row in rows][:limit]
+        # « total » reflète TOUJOURS le nombre réel d'arrêts de la période.
+        # Auparavant la réponse était tronquée à 400 sans le dire : 30 et 90
+        # jours affichaient alors le même nombre une fois ce plafond dépassé.
+        total = len(rows)
+        limit_brut = query.get("limit", [None])[0]
+        items = [_project(row) for row in rows]
+        if limit_brut:
+            try:
+                limite = max(0, int(limit_brut))
+            except ValueError:
+                limite = None
+            if limite is not None and limite < total:
+                items = items[:limite]
         return {
             "debut": start,
             "fin": end,
-            "total": len(items),
+            "total": total,
+            "affiches": len(items),
+            "tronque": len(items) < total,
             "au_bulletin": sum(1 for i in items if i["meta"]["au_bulletin"]),
             "inedits": sum(1 for i in items if i["meta"].get("inedit")),
             "arrets": items,

@@ -6,7 +6,19 @@ const state = {
   solutions: new Set(),
   config: {},
   busy: false,
+  total: 0,
+  tronque: false,
+  // Décisions dont le détail est déplié. Un re-rendu (rafraîchissement
+  // périodique, actualisation, filtre) reconstruit les cartes : sans cette
+  // mémoire, chaque détail ouvert se replierait tout seul.
+  ouverts: new Set(),
 };
+
+// Identifiant stable d'une décision, pour mémoriser son état déplié.
+function cleDe(item) {
+  const m = item.meta || {};
+  return String(m.id || m.ecli || `${m.number || ""}|${m.decision_date || ""}`);
+}
 
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, text) => {
@@ -59,6 +71,8 @@ async function load() {
   try {
     const data = await api(`/api/decisions?${qs}`);
     state.items = data.arrets || [];
+    state.total = typeof data.total === "number" ? data.total : state.items.length;
+    state.tronque = !!data.tronque;
     state.busy = !!data.busy;
     if (data.last_error) banner(data.last_error, "err");
     render();
@@ -92,7 +106,14 @@ function renderStats() {
   const cassation = items.filter((i) => (i.meta.solution || "").toLowerCase().includes("casse")).length;
   const distinct = new Set();
   items.forEach((i) => (i.themes || []).forEach((t) => distinct.add(t.code)));
-  $("#stat-total").textContent = items.length;
+  // Le total vient du serveur : il compte TOUS les arrêts de la période, même
+  // si l'affichage était limité. (Avant, on affichait le nombre de cartes
+  // reçues, plafonné à 400 : 30 et 90 jours semblaient identiques.)
+  $("#stat-total").textContent = state.total;
+  const totalEl = $("#stat-total");
+  if (totalEl && state.tronque) {
+    totalEl.textContent = `${state.total} (affichés : ${items.length})`;
+  }
   $("#stat-bulletin").textContent = bulletin;
   $("#stat-inedits").textContent = inedits;
   $("#stat-cassation").textContent = cassation;
@@ -337,9 +358,16 @@ function buildCard(item, template) {
 
   const toggle = card.querySelector(".toggle");
   const body = card.querySelector(".body");
+  const cle = cleDe(item);
+  // Rétablit l'état déplié mémorisé (survit aux re-rendus).
+  const deplie = state.ouverts.has(cle);
+  body.classList.toggle("hidden", !deplie);
+  toggle.textContent = deplie ? "Replier" : "Détail";
   toggle.onclick = () => {
-    body.classList.toggle("hidden");
-    toggle.textContent = body.classList.contains("hidden") ? "Détail" : "Replier";
+    const ouvert = body.classList.toggle("hidden") === false;
+    toggle.textContent = ouvert ? "Replier" : "Détail";
+    if (ouvert) state.ouverts.add(cle);
+    else state.ouverts.delete(cle);
   };
 
   card.dataset.search = normalise(
