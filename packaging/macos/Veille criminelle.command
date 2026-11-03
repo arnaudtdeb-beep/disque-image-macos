@@ -112,6 +112,29 @@ if [ -z "$PYTHON" ]; then
 fi
 info "Python trouvé : $("$PYTHON" -c 'import platform;print(platform.python_version())')"
 
+# Réglages optionnels saisis par l'utilisateur, une ligne « CLE=valeur » par
+# variable, dans ~/crim-hebdo/.env. Utile pour un réseau filtrant : on peut y
+# mettre CRIM_HEBDO_CA_BUNDLE=/chemin/vers/certificat.pem ou, en dernier
+# recours, CRIM_HEBDO_SSL_NO_VERIFY=1. Les commentaires (#) sont ignorés.
+FICHIER_ENV="$RACINE/.env"
+if [ -f "$FICHIER_ENV" ]; then
+  while IFS= read -r ligne || [ -n "$ligne" ]; do
+    case "$ligne" in
+      ''|'#'*) continue ;;
+    esac
+    cle="${ligne%%=*}"
+    valeur="${ligne#*=}"
+    cle="$(printf '%s' "$cle" | tr -d '[:space:]')"
+    [ -n "$cle" ] || continue
+    # On n'accepte que des noms de variable simples (pas d'export shell).
+    case "$cle" in
+      CRIM_HEBDO_CA_BUNDLE|CRIM_HEBDO_SSL_NO_VERIFY|CRIM_HEBDO_PYTHON)
+        export "$cle=$valeur" ;;
+    esac
+  done < "$FICHIER_ENV"
+  info "Réglages lus dans $FICHIER_ENV"
+fi
+
 titre "2. Installation du programme"
 if [ ! -f "$RACINE/tools/install.py" ] || version_differente; then
   info "Copie dans $RACINE"

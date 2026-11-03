@@ -611,6 +611,34 @@ python3 tools/serve_launchd.py install
 Cette variable est enregistrée dans l'agent launchd pour les mises à jour
 ultérieures. N'utilisez pas un certificat reçu d'une source non vérifiée.
 
+Pour éviter de passer par un Terminal, ces réglages peuvent être écrits une
+fois pour toutes dans un fichier `~/crim-hebdo/.env` (une ligne par variable,
+les lignes commençant par `#` sont ignorées). Le lanceur double-clic le lit à
+chaque démarrage et le transmet au serveur :
+
+```text
+# Certificat racine d'un antivirus ou d'un proxy qui intercepte le HTTPS :
+CRIM_HEBDO_CA_BUNDLE=/Users/moi/certificats/autorite-filtrage.pem
+```
+
+En dernier recours, sur une machine personnelle de confiance et sur un réseau
+familial (jamais sur un réseau public), on peut désactiver la vérification :
+
+```text
+CRIM_HEBDO_SSL_NO_VERIFY=1
+```
+
+Cela supprime la protection contre l'interception : à n'utiliser que si aucune
+autre solution n'est possible. La cause du message est presque toujours un
+antivirus, un VPN ou un filtrage du foyer ; la commande
+`openssl s_client -connect oauth.piste.gouv.fr:443 -servername oauth.piste.gouv.fr`
+indique l'émetteur du certificat (`issuer=`).
+
+> Note : un mauvais `client_id` / `client_secret` ne produit **jamais** cette
+> erreur. Le message `CERTIFICATE_VERIFY_FAILED` survient **avant** l'envoi des
+> identifiants : il traduit un problème de certificat sur le réseau, pas un
+> refus d'authentification (qui s'afficherait `HTTP 401`).
+
 ---
 
 ## Cadre juridique

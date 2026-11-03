@@ -42,9 +42,12 @@ def build_plist(port: int = PORT_DEFAUT) -> dict:
     logs = ROOT / "data" / "logs"
     logs.mkdir(parents=True, exist_ok=True)
     environment = {"PYTHONUNBUFFERED": "1"}
-    ca_bundle = os.environ.get("CRIM_HEBDO_CA_BUNDLE")
-    if ca_bundle:
-        environment["CRIM_HEBDO_CA_BUNDLE"] = ca_bundle
+    # Variables utiles au serveur (réseau filtrant). Lues depuis l'environnement
+    # du lanceur, lui-même alimenté par ~/crim-hebdo/.env.
+    for nom in ("CRIM_HEBDO_CA_BUNDLE", "CRIM_HEBDO_SSL_NO_VERIFY"):
+        valeur = os.environ.get(nom)
+        if valeur:
+            environment[nom] = valeur
     return {
         "Label": LABEL,
         # `--no-browser` : l'agent tourne sans fenêtre ni utilisateur présent,
@@ -247,6 +250,22 @@ def liberer_port(port: int) -> int:
     return libere
 
 
+def plist_a_jour(port: int) -> bool:
+    """Vrai si le plist installé correspond à ce qu'on écrirait maintenant.
+
+    Permet de prendre en compte une modification de ~/crim-hebdo/.env (par ex.
+    un certificat CRIM_HEBDO_CA_BUNDLE ajouté) sans attendre une réinstallation
+    complète : un simple lancement régénère et recharge l'agent.
+    """
+    if not PLIST_PATH.exists():
+        return False
+    try:
+        actuel = plistlib.loads(PLIST_PATH.read_bytes())
+    except (OSError, plistlib.InvalidFileException):
+        return False
+    return actuel == build_plist(port)
+
+
 def _lancer_agent() -> tuple[int, str]:
     """Tente kickstart si l'agent est chargé, sinon bootstrap."""
     if est_charge():
@@ -266,6 +285,12 @@ def demarrer(port: int, attendre_port: bool = True) -> int:
     """
     if not PLIST_PATH.exists():
         return installer(port, dry_run=False)
+
+    # Le plist doit refléter la configuration courante (variables du .env).
+    if not plist_a_jour(port):
+        print("configuration de l'agent modifiée, réinstallation…", file=sys.stderr)
+        if installer(port, dry_run=False) == 0:
+            return 0
 
     # Un ancien serveur orphelin peut tenir le port : on le libère d'abord,
     # sinon le premier essai échoue et il faut relancer une seconde fois.

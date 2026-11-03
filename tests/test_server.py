@@ -125,5 +125,54 @@ class TestServeLaunchd(unittest.TestCase):
         self.assertFalse(serve_launchd._est_notre_serveur(999999))
 
 
+
+class TestTLS(unittest.TestCase):
+    """Le contexte TLS suit les variables d'environnement, sans casser le défaut."""
+
+    def test_defaut_verifie(self):
+        import os
+        from unittest import mock
+        import ssl
+        from crim_hebdo import tls
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("CRIM_HEBDO_CA_BUNDLE", "CRIM_HEBDO_SSL_NO_VERIFY")}
+        with mock.patch.dict(os.environ, env, clear=True):
+            ctx = tls.ssl_context()
+        self.assertEqual(ctx.verify_mode, ssl.CERT_REQUIRED)
+
+    def test_desactivation(self):
+        import os
+        from unittest import mock
+        import ssl
+        from crim_hebdo import tls
+        with mock.patch.dict(os.environ, {"CRIM_HEBDO_SSL_NO_VERIFY": "1"}):
+            ctx = tls.ssl_context()
+        self.assertEqual(ctx.verify_mode, ssl.CERT_NONE)
+        self.assertFalse(ctx.check_hostname)
+
+    def test_ca_bundle_inexistant_leve(self):
+        import os
+        from unittest import mock
+        from crim_hebdo import tls
+        with mock.patch.dict(os.environ, {"CRIM_HEBDO_CA_BUNDLE": "/n/existe/pas.pem"}):
+            os.environ.pop("CRIM_HEBDO_SSL_NO_VERIFY", None)
+            with self.assertRaises(RuntimeError):
+                tls.ssl_context()
+
+    def test_plist_transmet_variables_reseau(self):
+        import os
+        from unittest import mock
+        sys.path.insert(0, str(ROOT / "tools"))
+        import serve_launchd
+        with mock.patch.dict(os.environ, {
+            "CRIM_HEBDO_CA_BUNDLE": "/tmp/ca.pem",
+            "CRIM_HEBDO_SSL_NO_VERIFY": "1",
+        }):
+            data = serve_launchd.build_plist(port=8765)
+        env = data["EnvironmentVariables"]
+        self.assertEqual(env["CRIM_HEBDO_CA_BUNDLE"], "/tmp/ca.pem")
+        self.assertEqual(env["CRIM_HEBDO_SSL_NO_VERIFY"], "1")
+
+
 if __name__ == "__main__":
     unittest.main()

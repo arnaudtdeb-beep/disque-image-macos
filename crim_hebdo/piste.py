@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from .config import Config
+from .tls import ssl_context
 
 USER_AGENT = "crim-hebdo/1.0 (+veille chambre criminelle; usage professionnel)"
 
@@ -88,7 +89,9 @@ class PisteClient:
             },
         )
         try:
-            with urllib.request.urlopen(request, timeout=30) as response:
+            with urllib.request.urlopen(
+                request, timeout=30, context=ssl_context()
+            ) as response:
                 payload = json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as exc:
             body = exc.read().decode("utf-8", "replace")[:500]
@@ -101,7 +104,20 @@ class PisteClient:
                 payload=body,
             ) from exc
         except urllib.error.URLError as exc:
-            raise PisteError(f"Endpoint OAuth PISTE injoignable ({self.config.token_url}) : {exc.reason}") from exc
+            raison = exc.reason
+            msg = f"Endpoint OAuth PISTE injoignable ({self.config.token_url}) : {raison}"
+            texte_raison = str(raison)
+            if "CERTIFICATE_VERIFY_FAILED" in texte_raison or "certificate verify failed" in texte_raison.lower():
+                msg += (
+                    "\n\nCela vient le plus souvent d'un antivirus, d'un filtrage "
+                    "réseau (entreprise, établissement) ou d'un proxy qui intercepte "
+                    "le HTTPS avec son propre certificat. Deux solutions :\n"
+                    "  • Fournir le certificat racine de ce filtrage via la variable "
+                    "CRIM_HEBDO_CA_BUNDLE=/chemin/vers/certificat.pem ;\n"
+                    "  • En dernier recours, sur une machine personnelle de confiance, "
+                    "définir CRIM_HEBDO_SSL_NO_VERIFY=1."
+                )
+            raise PisteError(msg) from exc
 
         access_token = payload.get("access_token")
         if not access_token:
@@ -137,7 +153,9 @@ class PisteClient:
             request = urllib.request.Request(url, data=body, method=method.upper(), headers=headers)
             request.add_header("Authorization", f"Bearer {self.token()}")
             try:
-                with urllib.request.urlopen(request, timeout=timeout) as response:
+                with urllib.request.urlopen(
+                    request, timeout=timeout, context=ssl_context()
+                ) as response:
                     raw = response.read().decode("utf-8")
                     return json.loads(raw) if raw.strip() else {}
             except urllib.error.HTTPError as exc:
